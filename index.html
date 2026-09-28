@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1B4B48">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Digital Easy">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Digital Easy - Learn Digital Skills</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FBF7EE; --ink:#2B2620; --teal:#276662; --teal-dark:#1B4B48;
+  --coral:#E07A4C; --coral-dark:#C15F35; --green:#3F7D4A; --green-bg:#E7F3E8;
+  --red:#B84B3C; --red-bg:#FBEAE6; --card:#FFFFFF; --border:#E4DCC8;
+  --radius:18px; --fs:18px; --scale:1;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+:root:not([data-theme="light"]){}
+:root[data-theme="dark"]{ --cream:#1E1B16; --ink:#F3EEE2; --card:#2A2620; --border:#4A4436; --teal:#4FA69E; --teal-dark:#7ED4CB; --coral:#F0966B; --green-bg:#26362A; --red-bg:#3A2622; }
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font-family:'Atkinson Hyperlegible',sans-serif;background:var(--cream);color:var(--ink);font-size:calc(var(--fs) * var(--scale));line-height:1.55;}
+[data-contrast="high"]{ --cream:#000; --ink:#FFF; --card:#111; --border:#FFF; --teal:#7EE0D6; --coral:#FFB37A; --green-bg:#0B2E12; --red-bg:#3A0B0B; }
+[data-contrast="high"] a, [data-contrast="high"] button{outline:2px solid #FFF}
+h1,h2,h3{line-height:1.2; margin:0 0 .5em}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible{outline:3px solid var(--coral); outline-offset:2px}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+/* Toolbar */
+.toolbar{position:sticky;top:0;z-index:50;background:var(--teal-dark);color:#fff;padding:10px 0 10px calc(10px + env(safe-area-inset-top,0px));padding-top:calc(10px + env(safe-area-inset-top,0px))}
+.toolbar .wrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.toolbar-group{display:flex;gap:8px;flex-wrap:wrap}
+.tbtn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:12px;padding:8px 14px;font-size:16px;font-weight:700}
+.tbtn:hover{background:rgba(255,255,255,.28)}
+select.tbtn{padding:8px 10px}
+/* Nav */
+nav.mainnav{background:var(--teal);position:sticky;top:56px;z-index:40}
+nav.mainnav .wrap{display:flex;gap:4px;overflow-x:auto;padding:0}
+nav.mainnav button{background:none;border:none;color:#fff;padding:16px 18px;font-size:17px;font-weight:700;border-bottom:4px solid transparent;white-space:nowrap}
+nav.mainnav button[aria-selected="true"]{border-bottom-color:var(--coral);background:rgba(255,255,255,.08)}
+main{padding:28px 0 60px}
+.page{display:none}
+.page.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+h1.hero{font-size:2.1em;color:var(--teal-dark);max-width:14ch}
+.sub{font-size:1.2em;max-width:40ch}
+.bigbtn{display:inline-block;background:var(--coral);color:#fff;border:none;border-radius:16px;padding:18px 30px;font-size:1.2em;font-weight:700;margin-top:16px}
+.bigbtn:hover{background:var(--coral-dark)}
+.bigbtn.secondary{background:var(--teal)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.modcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:left}
+.modcard .icon{font-size:2.4em}
+.modcard button{width:100%;margin-top:10px;background:var(--teal);color:#fff;border:none;border-radius:12px;padding:12px;font-size:1.05em;font-weight:700}
+.modcard.done{border-color:var(--green)}
+.badge-done{display:inline-block;background:var(--green-bg);color:var(--green);border-radius:20px;padding:4px 12px;font-weight:700;font-size:.9em;margin-top:8px}
+.progressbar{background:var(--border);border-radius:20px;height:26px;overflow:hidden;margin:10px 0}
+.progressbar > div{background:var(--green);height:100%;transition:width .4s}
+.steps{padding-left:1.2em}
+.steps li{margin-bottom:8px}
+.warn{background:var(--red-bg);color:var(--red);border-left:6px solid var(--red);border-radius:10px;padding:14px 18px;font-weight:700;margin:14px 0}
+.sim{background:var(--cream);border:2px dashed var(--border);border-radius:14px;padding:16px;margin:14px 0}
+.qopt{display:block;width:100%;text-align:left;background:var(--cream);border:2px solid var(--border);border-radius:12px;padding:12px 16px;margin:8px 0;font-size:1.05em}
+.qopt:hover{border-color:var(--teal)}
+.qopt.correct{background:var(--green-bg);border-color:var(--green)}
+.qopt.wrong{background:var(--red-bg);border-color:var(--red)}
+.feedback{font-weight:700;margin-top:8px}
+.feedback.ok{color:var(--green)} .feedback.bad{color:var(--red)}
+.backlink{background:none;border:2px solid var(--teal);color:var(--teal);border-radius:12px;padding:8px 16px;font-weight:700;margin-bottom:14px}
+.dict dt{font-weight:700;color:var(--teal-dark);margin-top:10px}
+.badges{display:flex;flex-wrap:wrap;gap:10px}
+.badgepill{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:10px 14px;font-weight:700;opacity:.4}
+.badgepill.earned{opacity:1;border-color:var(--coral)}
+footer{background:var(--teal-dark);color:#fff;padding:26px 0;margin-top:40px}
+footer .wrap{display:flex;gap:20px;flex-wrap:wrap}
+footer a{color:#fff}
+.homebtn{background:var(--cream);color:var(--teal-dark);border:2px solid var(--teal-dark);border-radius:12px;padding:6px 14px;font-weight:700}
+.qcard{margin-bottom:20px}
+details.dictentry{margin-bottom:8px}
+.chip{display:inline-block;background:var(--green-bg);color:var(--green);border-radius:20px;padding:4px 14px;font-weight:700;font-size:.85em}
+.tabrow{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.tabbtn{background:var(--cream);color:var(--ink);border:2px solid var(--teal);border-radius:14px;padding:12px 18px;font-weight:700;font-size:1em}
+.tabbtn.on{background:var(--teal);color:#fff}
+.contacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.contact{display:flex;align-items:center;gap:14px;background:var(--cream);border:2px solid var(--border);border-radius:16px;padding:12px;text-align:left;color:var(--ink);font-size:1em}
+.contact:hover{border-color:var(--green)}
+.avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.2em;flex:none}
+.avatar.big{width:120px;height:120px;font-size:4em;margin:0 auto 10px}
+.cinfo{display:flex;flex-direction:column;flex:1}
+.cinfo small{opacity:.7}
+.callicon{background:var(--green);color:#fff;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4em;flex:none}
+.padnum{font-size:2em;text-align:center;letter-spacing:3px;min-height:1.5em;border-bottom:3px solid var(--border);margin:10px 0}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:320px;margin:0 auto}
+.key{background:var(--cream);border:2px solid var(--border);border-radius:16px;padding:16px 0;font-size:1.5em;font-weight:700;color:var(--ink)}
+.padact{display:flex;gap:10px;max-width:320px;margin:10px auto 0}
+.padact .key{flex:1}
+.callgreen{flex:2;background:var(--green);color:#fff;border:none;border-radius:16px;font-size:1.3em;font-weight:700;padding:14px}
+.callscreen{text-align:center}
+.status{font-size:1.4em;font-weight:700;color:var(--green)}
+.ctrls{display:flex;justify-content:center;gap:16px;margin:16px 0;flex-wrap:wrap}
+.ctrl{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--cream);border:2px solid var(--border);border-radius:50%;width:92px;height:92px;justify-content:center;font-size:1.6em;color:var(--ink)}
+.ctrl span{font-size:.5em;font-weight:700}
+.ctrl.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.endred{background:var(--red);color:#fff;border:none;border-radius:50px;padding:16px 40px;font-size:1.3em;font-weight:700}
+
+.pcap{font-size:1.2em;font-weight:700;background:var(--card);border:2px solid var(--teal);border-radius:14px;padding:12px 16px;text-align:center;max-width:380px;margin:8px auto}
+.pcap.ok{border-color:var(--green);color:var(--green)} .pcap.bad{border-color:var(--red);color:var(--red)}
+.phone{width:min(100%,360px);height:680px;margin:12px auto;background:#fff;color:#202124;border:10px solid #1c1c1e;border-radius:38px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.28);font-size:calc(17px*var(--scale));font-family:Roboto,'Atkinson Hyperlegible',sans-serif}
+.phone.dark{background:#121212;color:#fff}
+.pstat{display:flex;justify-content:space-between;padding:5px 16px;font-size:13px;flex:none}
+.pstat-i{display:flex;gap:4px;align-items:center}
+.pscr{flex:1;overflow:auto;position:relative;display:flex;flex-direction:column}
+.pnav{flex:none;height:54px;background:#000;display:flex;justify-content:space-around;align-items:center}
+.pnav button{background:none;border:none;color:#fff;padding:12px 26px}
+.pbar{padding:14px 16px;font-size:1.25em;font-weight:700;display:flex;align-items:center;gap:10px;flex:none;border-bottom:1px solid rgba(128,128,128,.25)}
+.plist{overflow:auto;flex:1;padding-bottom:80px}
+.prow{display:flex;align-items:center;gap:12px;width:100%;background:none;border:none;border-bottom:1px solid rgba(128,128,128,.2);padding:10px 14px;text-align:left;color:inherit;font-size:1em}
+.pav{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.7em;flex:none}
+.pav.sm{width:38px;height:38px;font-size:1.3em}.pav.big{width:110px;height:110px;font-size:3.6em;margin:0 auto 8px}
+.pt{flex:1;display:flex;flex-direction:column}.pt small{opacity:.65}
+.pgreen{background:#2E7D32;color:#fff;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+.pfab{position:absolute;right:16px;bottom:16px;width:64px;height:64px;border-radius:20px;border:none;background:#1A73E8;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.35)}
+.pnum{font-size:2em;text-align:center;min-height:1.6em;letter-spacing:2px;padding:10px}
+.pkeys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 18px}
+.pkeys button{background:rgba(128,128,128,.14);border:none;border-radius:50px;padding:14px 0;font-size:1.5em;font-weight:500;color:inherit;display:flex;align-items:center;justify-content:center}
+.pact{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:6px 18px;justify-items:center}
+.pcallbig,.pendbig{width:70px;height:70px;border-radius:50%;border:none;color:#fff;display:flex;align-items:center;justify-content:center}
+.pcallbig{background:#2E7D32}.pendbig{background:#D32F2F}
+.pdel{background:none;border:none;color:inherit}
+.pincall{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;gap:6px}
+.pincall h2,.pincall h3{margin:0}.pincall p{margin:0;opacity:.8}
+#pSt{color:#81C995;font-size:1.2em}
+.pctrls{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin:16px 0}
+.pctrl{background:none;border:none;color:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.8em}
+.pctrl span{width:58px;height:58px;border-radius:50%;background:#2c2c2e;display:flex;align-items:center;justify-content:center}
+.pctrl.on span{background:#8AB4F8;color:#000}
+.pans{display:flex;gap:70px;margin-top:40px}
+.plaunch{display:grid;grid-template-columns:repeat(3,1fr);gap:22px 8px;padding:40px 14px;align-content:start}
+.papp{background:none;border:none;color:#fff;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:.85em}
+.picon{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;color:#fff}
+.pchat{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:#F1F3F4}
+.pbub{max-width:80%;padding:10px 14px;border-radius:18px;line-height:1.35}
+.pbub.in{background:#fff;align-self:flex-start;border-bottom-left-radius:4px}
+.pbub.out{background:#1A73E8;color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.pbub.dk{background:#2c2c2e;color:#fff;margin:8px 0}
+.plink{color:#1A73E8}
+.pcomp{display:flex;align-items:center;gap:6px;padding:8px;background:#fff;flex:none}
+.pcomp input{flex:1;border:2px solid #DADCE0;border-radius:24px;padding:10px 14px;font-size:1em;font-family:inherit;min-width:0}
+.pclip{background:none;border:none;color:#5f6368}
+.psend{background:#1A73E8;color:#fff;border:none;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center}
+.pchips{display:flex;flex-direction:column;gap:8px;padding:12px;width:100%}
+.pchip{background:#fff;color:#202124;border:2px solid #DADCE0;border-radius:24px;padding:12px 16px;font-size:1em;font-weight:700}
+.pchip.good{background:#E6F4EA;border-color:#2E7D32}.pchip.bad{background:#FCE8E6;border-color:#D32F2F}
+.pcam{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-around;padding:12px}
+.pview{position:relative;width:220px;height:220px;display:flex;align-items:center;justify-content:center;background:#1e1e1e}
+.pview .c{position:absolute;width:34px;height:34px;border:4px solid #fff}
+.tl{top:0;left:0;border-right:0!important;border-bottom:0!important}.tr{top:0;right:0;border-left:0!important;border-bottom:0!important}
+.bl{bottom:0;left:0;border-right:0!important;border-top:0!important}.br{bottom:0;right:0;border-left:0!important;border-top:0!important}
+.pshut{width:74px;height:74px;border-radius:50%;background:#fff;border:6px solid #9AA0A6}
+.ppay{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 16px;gap:6px;text-align:center}
+.ppay h3{margin:0}.pver{color:#2E7D32;display:flex;gap:6px;align-items:center;margin:0;font-weight:700}
+.pamt{font-size:2.2em;font-weight:700;margin:14px 0}.pamt input{width:130px;font-size:1em;border:none;border-bottom:3px solid #1A73E8;text-align:center;font-family:inherit;background:none;color:inherit}
+.pbtn{background:#1A73E8;color:#fff;border:none;border-radius:28px;padding:14px 28px;font-size:1.1em;font-weight:700}
+.psmall{opacity:.7;font-size:.8em}
+.pwarn{background:#FCE8E6;color:#B3261E;display:flex;gap:8px;align-items:center;padding:10px 14px;font-weight:700;font-size:.9em}
+.pc{text-align:center;margin:14px 0 4px}
+.pdots{display:flex;justify-content:center;gap:16px;margin:12px 0}.pdots i{width:18px;height:18px;border-radius:50%;border:3px solid #5f6368}.pdots i.f{background:#1A73E8;border-color:#1A73E8}
+.pdone{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:16px}
+.pchk{color:#2E7D32}
+.ppw{padding:16px;display:flex;flex-direction:column;gap:10px}
+.ppw input{font-size:1.1em;padding:12px;border:2px solid #DADCE0;border-radius:10px;font-family:inherit}
+.pmeter{display:flex;gap:6px}.pmeter i{flex:1;height:10px;border-radius:6px;background:#DADCE0}.pmeter i.y{background:#2E7D32}
+.pchk{list-style:none;padding:0;margin:0}.pchk li{display:flex;gap:8px;align-items:center;padding:6px 0;color:#9AA0A6}.pchk li.y{color:#2E7D32;font-weight:700}
+
+.sheet{position:fixed;inset:0;z-index:200;background:var(--cream);color:var(--ink);display:flex;flex-direction:column;transform:translateY(100%);visibility:hidden;transition:transform .35s ease,visibility 0s .35s}
+.sheet.open{transform:none;visibility:visible;transition:transform .35s ease}
+.sheethead{display:flex;align-items:center;gap:14px;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top,0px));background:var(--teal-dark);color:#fff;flex:none;font-size:1.15em}
+.sheethead button{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:12px;padding:10px 18px;font-size:1em;font-weight:700}
+.sheetbody{flex:1;overflow:auto;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));max-width:900px;width:100%;margin:0 auto}
+.sheet .phone{height:min(690px,calc(100dvh - 240px));min-height:470px}
+.homescreen{background:linear-gradient(160deg,#1a237e,#00695c);border-radius:28px;padding:30px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:26px 10px}
+.happ{background:none;border:none;color:#fff;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:1em;font-weight:700;text-align:center}
+.hicon{width:80px;height:80px;border-radius:26px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.happ:active .hicon{transform:scale(.94)}
+
+.pchips .pchip{margin-bottom:8px}
+
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px}
+.pthumb{aspect-ratio:1;border:none;border-radius:10px;font-size:2em;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <div class="toolbar-group">
+      <button class="tbtn" id="homeBtn" title="Home">🏠 Home</button>
+      <button class="tbtn" id="readAloud">🔊 Read Aloud</button>
+      <button class="tbtn" id="incText">A+</button>
+      <button class="tbtn" id="decText">A-</button>
+      <button class="tbtn" id="contrastBtn">🌗 Contrast</button>
+    </div>
+    <div class="toolbar-group">
+      <select class="tbtn" id="langSel">
+        <option value="en">🌐 English</option>
+        <option value="hi">🌐 हिंदी</option>
+        <option value="mr">🌐 मराठी</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<nav class="mainnav" role="tablist">
+  <div class="wrap">
+    <button data-page="home" aria-selected="true" role="tab">Home</button>
+    <button data-page="modules" role="tab">Modules</button>
+    <button data-page="practice" role="tab">Practice Zone</button>
+    <button data-page="quiz" role="tab">Quiz &amp; Progress</button>
+    <button data-page="help" role="tab">Help &amp; Support</button>
+    <button data-page="game" role="tab">Game 🎮</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- HOME -->
+<section id="home" class="page active">
+  <h1 class="hero" data-i18n="heroTitle">Learn Digital Skills. One Simple Step at a Time.</h1>
+  <p class="sub" data-i18n="heroSub">Simple digital lessons designed especially for senior citizens.</p>
+  <button class="bigbtn" data-goto="modules">Start Learning ▸</button>
+  <button class="bigbtn secondary" id="installBtn" style="display:none;margin-left:10px">📲 Install App</button>
+
+  <div class="card" style="margin-top:26px">
+    <h2>How It Works</h2>
+    <ol class="steps">
+      <li><strong>Watch</strong> a simple explanation of a skill.</li>
+      <li><strong>Learn</strong> the steps, one at a time.</li>
+      <li><strong>Practice</strong> safely — nothing real happens.</li>
+      <li><strong>Answer</strong> a few easy questions.</li>
+      <li><strong>Complete</strong> the lesson and earn a badge.</li>
+    </ol>
+  </div>
+
+  <h2 style="margin-top:26px">Your Learning Modules</h2>
+  <div class="grid2" id="homeModuleGrid"></div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Your Progress</h2>
+    <div class="progressbar"><div id="homeProgressBar" style="width:0%"></div></div>
+    <p id="homeProgressText">0 of 6 modules completed</p>
+  </div>
+
+  <div class="card">
+    <h2>Why Learn Digital Skills?</h2>
+    <ul class="steps">
+      <li>Stay in touch with family through calls and video</li>
+      <li>Pay bills and send money without visiting a bank</li>
+      <li>Find information and services quickly</li>
+      <li>Feel confident and independent every day</li>
+    </ul>
+  </div>
+
+  <div class="warn">⚠️ Emergency Digital Safety Tips: Never share your OTP or PIN. Banks never call asking for your OTP. If unsure, hang up and call your bank's official number.</div>
+</section>
+
+<!-- MODULES -->
+<section id="modules" class="page">
+  <h1>Learning Modules</h1>
+  <p>Choose a module to begin. You can stop and continue anytime.</p>
+  <div class="grid2" id="moduleGrid"></div>
+  <div id="moduleDetail"></div>
+</section>
+
+<!-- PRACTICE -->
+<section id="practice" class="page">
+  <h1>Practice Zone 🎯</h1>
+  <p>Try these safely. Nothing here sends real messages, calls, or money.</p>
+  <div class="grid2" id="practiceGrid"></div>
+  <div id="practiceDetail"></div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="page">
+  <h1>Quiz &amp; Progress 🏆</h1>
+  <div class="card">
+    <div class="progressbar"><div id="quizProgressBar" style="width:0%"></div></div>
+    <p id="quizProgressText">0 of 6 modules completed</p>
+    <p id="quizScoreText">Total score: 0</p>
+  </div>
+  <h2>Badges</h2>
+  <div class="badges" id="badgeRow"></div>
+  <h2 style="margin-top:24px">Module Quizzes</h2>
+  <div id="quizList"></div>
+  <div id="quizDetail"></div>
+</section>
+
+<!-- HELP -->
+<section id="help" class="page">
+  <h1>Help &amp; Support ❤️</h1>
+  <button class="bigbtn" id="needHelpBtn">🙋 I Need Help</button>
+  <button class="bigbtn secondary" id="replayBtn">🔁 Replay Tutorial</button>
+
+  <div class="card">
+    <h2>Frequently Asked Questions</h2>
+    <details class="dictentry"><summary>My phone screen is too small to read. What do I do?</summary><p>Use the <strong>A+</strong> button at the top of every page to make text bigger.</p></details>
+    <details class="dictentry"><summary>I forgot my progress. Is it saved?</summary><p>Yes. Your progress is saved automatically on this device.</p></details>
+    <details class="dictentry"><summary>Someone called asking for my OTP. What should I do?</summary><p>Never share it. Hang up and call your bank using the number on your card.</p></details>
+    <details class="dictentry"><summary>How do I change the language?</summary><p>Use the 🌐 language menu at the top of the page.</p></details>
+  </div>
+
+  <div class="card">
+    <h2>Common Smartphone Problems</h2>
+    <ul class="steps">
+      <li><strong>Phone is slow:</strong> Restart it by holding the power button.</li>
+      <li><strong>Can't hear calls:</strong> Check the volume buttons on the side.</li>
+      <li><strong>No internet:</strong> Check that Wi-Fi is turned on in Settings.</li>
+      <li><strong>Screen too dim:</strong> Adjust brightness in Settings.</li>
+    </ul>
+  </div>
+
+  <div class="card dict">
+    <h2>Digital Dictionary</h2>
+    <dl>
+      <dt>OTP</dt><dd>One-Time Password — a secret code sent to confirm it's really you.</dd>
+      <dt>UPI</dt><dd>Unified Payments Interface — a way to send money using your phone.</dd>
+      <dt>Wi-Fi</dt><dd>Wireless Internet Connection — lets your phone go online without mobile data.</dd>
+      <dt>QR Code</dt><dd>A square code your phone camera can scan to open a link or make a payment.</dd>
+      <dt>Browser</dt><dd>An app used to visit websites, like Chrome.</dd>
+      <dt>Link</dt><dd>A clickable address that opens another page — be careful with unknown links.</dd>
+    </dl>
+  </div>
+</section>
+
+
+<!-- GAME -->
+<section id="game" class="page">
+  <h1>Play &amp; Learn 🎮</h1>
+  <div class="card" id="gameCard">
+    <h2>Spot the Scam</h2>
+    <p>Read each message and decide: is it safe, or a scam?</p>
+    <p>High Score: <strong id="gameHigh">0</strong></p>
+    <button class="bigbtn" id="gameStart">Start Game ▸</button>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a href="#" data-goto="help">About</a>
+    <a href="#" data-goto="help">Help</a>
+    <a href="#" data-goto="help">Privacy</a>
+    <a href="#" data-goto="help">Contact</a>
+  </div>
+</footer>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"><div class="sheethead"><button id="sheetClose">⌄ Close</button><strong id="sheetTitle"></strong></div><div class="sheetbody" id="sheetBody"></div></div>
+
+<script>
+/* ---------- Data ---------- */
+const MODULES = [
+ {id:'m1', icon:'📱', title:'Smartphone Basics', desc:'Calls, contacts, volume, Wi-Fi and settings.',
+  steps:['To make a call, open the Phone app and tap a contact, then tap the green call button.',
+         'To save a contact, open Contacts, tap "+", type the name and number, then tap Save.',
+         'To change volume, press the buttons on the side of your phone.',
+         'To change text size, go to Settings → Display → Font Size and slide it larger.',
+         'To connect to Wi-Fi, go to Settings → Wi-Fi, turn it on, and tap your home network.'],
+  practice:'Tap the green button below to practice making a call.'},
+ {id:'m2', icon:'💬', title:'WhatsApp & Messaging', desc:'Messages, photos, voice notes and video calls.',
+  steps:['Open WhatsApp and tap a contact to start a chat.',
+         'Type your message in the box and tap the arrow to send.',
+         'To send a photo, tap the paperclip (📎) icon and choose a picture.',
+         'To send a voice message, press and hold the microphone icon and speak.',
+         'To make a video call, tap the camera icon at the top of a chat.',
+         'Be careful of messages asking for money or OTP — these are often scams.'],
+  practice:'Try the simulated chat below.'},
+ {id:'m3', icon:'💳', title:'UPI & Digital Payments', desc:'Scan, pay, and check payments safely.',
+  steps:['UPI lets you send money instantly using your phone.',
+         'To scan a QR code, open your UPI app and tap "Scan QR".',
+         'Always check the receiver\'s name on screen before confirming payment.',
+         'To send money, enter the amount and tap Pay.',
+         'To check a payment, open "Transaction History" in your UPI app.'],
+  warn:'Never share your UPI PIN or OTP with anyone — not even your bank.',
+  practice:'Try the fake payment simulator below. No real money is used.'},
+ {id:'m4', icon:'🌐', title:'Internet & Google', desc:'Browsing, searching, and staying safe online.',
+  steps:['A browser (like Chrome) is used to visit websites.',
+         'To search, open Google and type what you want to know.',
+         'To use voice search, tap the microphone icon and speak your question.',
+         'Look for "https://" and a lock icon to know a site is safer.',
+         'Be cautious of sites asking for your bank details or passwords.'],
+  practice:'Try the simulated search below.'},
+ {id:'m5', icon:'📷', title:'Photos & Video Calls', desc:'Taking, sharing and deleting photos, and video calls.',
+  steps:['To take a photo, open the Camera app and tap the round button.',
+         'To view photos, open the Gallery or Photos app.',
+         'To share a photo, open it and tap the Share icon.',
+         'To delete a photo, open it, tap the trash icon, then confirm.',
+         'To make a video call on Google Meet, tap "New Meeting" and share the link with family.'],
+  practice:'Follow the visual steps above to practice on your own phone.'},
+ {id:'m6', icon:'🛡️', title:'Online Safety & Scam Awareness', desc:'OTP, passwords, fake calls and messages.',
+  steps:['OTP means One-Time Password — never share it, even with "bank staff".',
+         'Use a strong password: mix letters, numbers, and avoid your birthday.',
+         'Banks and government offices never call asking for your OTP or PIN.',
+         'Do not click links from unknown numbers.',
+         'To block a caller, open Phone → recent call → tap the number → Block.',
+         'To report a scam, contact your bank or call the national Cyber Crime helpline 1930.'],
+  scenario:{q:'You receive a call saying: "I am calling from your bank. Tell me the OTP you just received."',
+    options:[{t:'Tell them the OTP', ok:false},{t:'End the call and contact the bank through its official number', ok:true}]}}
+];
+
+const QUIZZES = {
+ m1:[{q:'Which button changes the phone volume?',opts:['The buttons on the side of the phone','The camera icon'],a:0},
+     {q:'True or False: You need Wi-Fi to make a phone call.',opts:['True','False'],a:1},
+     {q:'Where do you go to make text bigger?',opts:['Settings → Display → Font Size','The Camera app'],a:0}],
+ m2:[{q:'Which icon do you tap to send a photo in WhatsApp?',opts:['The paperclip 📎','The trash can'],a:0},
+     {q:'True or False: You should reply with money if a message asks urgently.',opts:['True','False'],a:1},
+     {q:'How do you send a voice message?',opts:['Press and hold the microphone icon','Shake the phone'],a:0}],
+ m3:[{q:'What should you check before paying with UPI?',opts:['The receiver\'s name on screen','The phone\'s battery percentage'],a:0},
+     {q:'True or False: It is safe to share your UPI PIN with a bank "employee" who calls you.',opts:['True','False'],a:1},
+     {q:'How do you check if a payment succeeded?',opts:['Look in Transaction History','Restart the phone'],a:0}],
+ m4:[{q:'What symbol shows a website may be safer?',opts:['A lock icon and "https://"','A red circle'],a:0},
+     {q:'True or False: You can search Google using your voice.',opts:['True','False'],a:0},
+     {q:'What should you avoid clicking?',opts:['Unknown links from strangers','The Google search bar'],a:0}],
+ m5:[{q:'Which app do you use to take a photo?',opts:['Camera app','Calculator app'],a:0},
+     {q:'True or False: Deleted photos ask for confirmation first.',opts:['True','False'],a:0},
+     {q:'What do you tap to share a photo?',opts:['The Share icon','The Home button'],a:0}],
+ m6:[{q:'What does OTP stand for?',opts:['One-Time Password','Online Transfer Payment'],a:0},
+     {q:'True or False: Banks call asking for your OTP.',opts:['True','False'],a:1},
+     {q:'What should a strong password include?',opts:['A mix of letters and numbers, not your birthday','Just your name'],a:0}]
+};
+
+const BADGES = [
+ {id:'m1',label:'🏅 Smartphone Starter'},{id:'m2',label:'🏅 Messaging Master'},
+ {id:'m3',label:'🏅 UPI Smart User'},{id:'m4',label:'🏅 Internet Explorer'},
+ {id:'m5',label:'🏅 Photo & Video Pro'},{id:'m6',label:'🏅 Digital Safety Champion'}
+];
+
+const I18N = {
+ en:{heroTitle:'Learn Digital Skills. One Simple Step at a Time.',heroSub:'Simple digital lessons designed especially for senior citizens.'},
+ hi:{heroTitle:'डिजिटल कौशल सीखें। एक समय में एक सरल कदम।',heroSub:'वरिष्ठ नागरिकों के लिए विशेष रूप से बनाए गए सरल डिजिटल पाठ।'},
+ mr:{heroTitle:'डिजिटल कौशल्ये शिका. एका वेळी एक सोपे पाऊल.',heroSub:'ज्येष्ठ नागरिकांसाठी खास तयार केलेले सोपे डिजिटल धडे.'}
+};
+
+/* ---------- State ---------- */
+let state = {completed:{}, scores:{}};
+try{ const s=localStorage.getItem('digitalEasyState'); if(s) state=JSON.parse(s);}catch(e){}
+function save(){ try{localStorage.setItem('digitalEasyState', JSON.stringify(state));}catch(e){} }
+
+/* ---------- Navigation ---------- */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));
+  document.querySelectorAll('nav.mainnav button').forEach(b=>b.setAttribute('aria-selected', b.dataset.page===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='quiz') renderQuiz();
+  if(id==='modules') renderModules();
+  if(id==='game') gameHome();
+}
+document.querySelectorAll('nav.mainnav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();showPage(b.dataset.goto);}));
+document.getElementById('homeBtn').addEventListener('click',()=>showPage('home'));
+
+/* ---------- Accessibility toolbar ---------- */
+let scale=1;
+document.getElementById('incText').addEventListener('click',()=>{scale=Math.min(scale+0.1,1.6);document.documentElement.style.setProperty('--scale',scale);});
+document.getElementById('decText').addEventListener('click',()=>{scale=Math.max(scale-0.1,0.8);document.documentElement.style.setProperty('--scale',scale);});
+document.getElementById('contrastBtn').addEventListener('click',()=>{
+  const cur=document.documentElement.getAttribute('data-contrast');
+  document.documentElement.setAttribute('data-contrast', cur==='high'?'':'high');
+});
+document.getElementById('readAloud').addEventListener('click',()=>{
+  if(!('speechSynthesis' in window)){ alert('Read aloud is not supported on this browser.'); return; }
+  const active=document.querySelector('.page.active');
+  const text=active.innerText.slice(0,2000);
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text); u.rate=0.9; u.lang={en:'en-IN',hi:'hi-IN',mr:'mr-IN'}[lang]||'en-IN';
+  speechSynthesis.speak(u);
+});
+
+
+/* ---------- Modules rendering ---------- */
+function moduleCardHTML(m, compact){
+  const done = state.completed[m.id];
+  return `<div class="modcard ${done?'done':''}">
+    <div class="icon">${m.icon}</div>
+    <h3>${m.title}</h3>
+    <p>${m.desc}</p>
+    ${done?'<span class="badge-done">✓ Completed</span>':''}
+    <button data-open="${m.id}">Learn More ▸</button>
+  </div>`;
+}
+function renderHomeGrid(){
+  document.getElementById('homeModuleGrid').innerHTML = MODULES.map(m=>moduleCardHTML(m)).join('');
+  document.getElementById('homeModuleGrid').querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>{showPage('modules');openModule(b.dataset.open);}));
+  updateProgressUI();
+}
+function renderModules(){
+  document.getElementById('moduleGrid').innerHTML = MODULES.map(m=>moduleCardHTML(m)).join('');
+  document.getElementById('moduleGrid').querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.open)));
+}
+function openModule(id){
+  const m = MODULES.find(x=>x.id===id);
+  const det = openSheet(m.title);
+  let sim='';
+  if(id==='m2') sim = `<div class="sim"><strong>Simulated Chat</strong><p>Mom: "Can you send me a photo of the flowers?"</p>
+    <button class="bigbtn secondary" id="simSend2">📎 Send Photo</button><p id="simMsg2"></p></div>`;
+  if(id==='m3') sim = `<div class="sim"><strong>Fake Payment Simulator (no real money)</strong>
+    <p>Pay to: <strong>Ramesh Kumar Stores</strong></p>
+    <input type="number" id="payAmt" placeholder="Enter amount" style="font-size:1.1em;padding:8px;border-radius:8px;border:2px solid var(--border);width:140px">
+    <button class="bigbtn secondary" id="simPay">Pay</button><p id="simMsg3"></p></div>`;
+  if(id==='m4') sim = `<div class="sim"><strong>Simulated Search</strong>
+    <input id="searchBox" placeholder="Type: weather today" style="font-size:1.1em;padding:8px;border-radius:8px;border:2px solid var(--border);width:70%">
+    <button class="bigbtn secondary" id="simSearch">Search</button><p id="simMsg4"></p></div>`;
+  if(id==='m1') sim = `<div class="sim"><strong>Practice a Call</strong><button class="bigbtn secondary" id="simCall">📞 Call Grandson</button><p id="simMsg1"></p></div>`;
+
+  let scenarioHTML='';
+  if(m.scenario){
+    scenarioHTML = `<div class="card"><strong>${m.scenario.q}</strong>
+      ${m.scenario.options.map((o,i)=>`<button class="qopt" data-ok="${o.ok}">${String.fromCharCode(65+i)}. ${o.t}</button>`).join('')}
+      <p class="feedback" id="scenarioFeedback"></p></div>`;
+  }
+
+  det.innerHTML = `<div class="card">
+    <button class="backlink" id="closeMod">◂ Back to Modules</button>
+    <h2>${m.icon} ${m.title}</h2>
+    ${m.warn?`<div class="warn">⚠️ ${m.warn}</div>`:''}
+    <h3>Learn</h3>
+    <ol class="steps">${m.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+    <h3>Practice</h3>
+    <p>${m.practice||''}</p>
+    ${sim}
+    ${scenarioHTML}
+    <button class="bigbtn" id="completeLesson">✓ Lesson Completed</button>
+  </div>`;
+  document.getElementById('closeMod').addEventListener('click',closeSheet);
+  document.getElementById('completeLesson').addEventListener('click',()=>{
+    state.completed[m.id]=true; save(); renderModules(); renderHomeGrid(); closeSheet();
+    alert(tx('Lesson Completed! ✓ Great job.'));
+  });
+  if(document.getElementById('simCall')) document.getElementById('simCall').addEventListener('click',()=>{document.getElementById('simMsg1').textContent='📞 Calling... Connected! (This is a practice call, no one was really called.)';});
+  if(document.getElementById('simSend2')) document.getElementById('simSend2').addEventListener('click',()=>{document.getElementById('simMsg2').textContent='✓ Photo sent! Mom: "Beautiful, thank you!"';});
+  if(document.getElementById('simPay')) document.getElementById('simPay').addEventListener('click',()=>{
+    const v=document.getElementById('payAmt').value||'0';
+    document.getElementById('simMsg3').textContent=`✓ Practice payment of ₹${v} to Ramesh Kumar Stores successful. (No real money was sent.)`;});
+  if(document.getElementById('simSearch')) document.getElementById('simSearch').addEventListener('click',()=>{
+    const v=document.getElementById('searchBox').value||'your search';
+    document.getElementById('simMsg4').textContent=`Showing results for "${v}"... Today: Sunny, 29°C. (Practice result.)`;});
+  det.querySelectorAll('.qopt').forEach(b=>b.addEventListener('click',()=>{
+    const ok=b.dataset.ok==='true';
+    det.querySelectorAll('.qopt').forEach(x=>x.classList.remove('correct','wrong'));
+    b.classList.add(ok?'correct':'wrong');
+    document.getElementById('scenarioFeedback').textContent = ok? 'Correct! 🎉 Never share an OTP over the phone.' : 'Try Again 😊 Never share your OTP, even with someone claiming to be from your bank.';
+    document.getElementById('scenarioFeedback').className='feedback '+(ok?'ok':'bad');
+  }));
+  
+}
+
+/* ---------- Practice Zone ---------- */
+const PRACTICES = [
+ {id:'call',icon:'📞',title:'Practice a Phone Call'},
+ {id:'msg',icon:'💬',title:'Practice Sending a Message'},
+ {id:'qr',icon:'🔳',title:'Practice Scanning a QR Code'},
+ {id:'upi',icon:'💳',title:'Practice a UPI Payment'},
+ {id:'fakemsg',icon:'🚩',title:'Identify a Fake Message'},
+ {id:'fakecall',icon:'☎️',title:'Identify a Suspicious Call'},
+ {id:'pwd',icon:'🔑',title:'Create a Strong Password'}
+];
+
+/* ---------- Android-style Practice Zone ---------- */
+const IC={
+ call:'M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z',
+ end:'M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.73-1.68-1.36-2.66-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z',
+ mic:'M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z',
+ vol:'M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z',
+ vid:'M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z',
+ dial:'M12 19c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 1c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12-8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-6 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z',
+ bksp:'M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z',
+ send:'M2.01 21L23 12 2.01 3 2 10l15 2-15 2z',
+ chat:'M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z',
+ clip:'M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z',
+ qr:'M9.5 6.5v3h-3v-3h3M11 5H5v6h6V5zm-1.5 9.5v3h-3v-3h3M11 13H5v6h6v-6zm6.5-6.5v3h-3v-3h3M19 5h-6v6h6V5zm-6 8h1.5v1.5H13V13zm1.5 1.5H16V16h-1.5v-1.5zM16 13h1.5v1.5H16V13zm-3 3h1.5v1.5H13V16zm1.5 1.5H16V19h-1.5v-1.5zM16 16h1.5v1.5H16V16zm1.5-1.5H19V16h-1.5v-1.5zm0 3H19V19h-1.5v-1.5zM22 7h-2V4h-3V2h5v5zm0 15v-5h-2v3h-3v2h5zM2 22h5v-2H4v-3H2v5zM2 2v5h2V4h3V2H2z',
+ wallet:'M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z',
+ lock:'M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z',
+ warn:'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z',
+ ok:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z',
+ back:'M15.5 5v14l-9-7z',
+ wifi:'M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z',
+ sig:'M2 22h20V2z',
+ batt:'M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z',
+ person:'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',
+ gear:'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z',
+ mappin:'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
+ gallery:'M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zM11 12l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z',
+ plus:'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
+ trash:'M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z'
+};
+const ic=(n,s=24)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${IC[n]}"/></svg>`;
+const PEOPLE=[
+ {n:'Rahul',r:'Son',a:'👨',num:'00000 00001',c:'#DCEBFA'},{n:'Priya',r:'Daughter',a:'👩',num:'00000 00002',c:'#FBE3EC'},
+ {n:'Aarav',r:'Grandson',a:'👦',num:'00000 00003',c:'#E4F3DF'},{n:'Anaya',r:'Granddaughter',a:'👧',num:'00000 00004',c:'#FFF0D2'},
+ {n:'Suresh',r:'Brother',a:'👴',num:'00000 00005',c:'#E9E3F7'},{n:'Meena',r:'Sister',a:'👵',num:'00000 00006',c:'#FBE3EC'},
+ {n:'Dr. Sharma',r:'Doctor',a:'🧑‍⚕️',num:'00000 00007',c:'#DDF3F1'},{n:'Mr. Patil',r:'Neighbour',a:'🧔',num:'00000 00008',c:'#EFE7DB'}
+];
+let pBack=null, pTimer=null;
+const q=id=>document.getElementById(id);
+function phoneHTML(){
+  return `<div class="phone"><div class="pstat"><span>10:24</span><span class="pstat-i">${ic('wifi',15)}${ic('sig',15)}${ic('batt',15)}</span></div>
+  <div class="pscr" id="pscr"></div>
+  <div class="pnav"><button id="nBack" aria-label="Back">${ic('back',22)}</button><button id="nHome" aria-label="Home"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.5"/></svg></button><button id="nRec" aria-label="Recent apps"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2.5"/></svg></button></div></div>`;
+}
+function show(html,dark,back){
+  const p=document.querySelector('.phone'); if(!p) return;
+  clearInterval(pTimer); p.classList.toggle('dark',!!dark); q('pscr').innerHTML=html; pBack=back||null;
+}
+function hint(t,cls){ const h=q('pcap'); if(h){ h.textContent=t; h.className='pcap '+(cls||''); } }
+function chips(good,bad){
+  document.querySelectorAll('.pchip').forEach(b=>b.onclick=()=>{
+    const ok=b.dataset.ok==='1';
+    document.querySelectorAll('.pchip').forEach(x=>x.classList.remove('good','bad')); b.classList.add(ok?'good':'bad');
+    hint(ok?good:bad, ok?'ok':'bad');
+  });
+}
+function openSheet(title){
+  q('sheetTitle').textContent=title; q('sheetBody').innerHTML='';
+  q('sheet').classList.add('open'); document.body.style.overflow='hidden';
+  return q('sheetBody');
+}
+function closeSheet(){
+  clearInterval(pTimer); const sh=q('sheet'); sh.classList.remove('open'); document.body.style.overflow='';
+  setTimeout(()=>{ if(!sh.classList.contains('open')) q('sheetBody').innerHTML=''; },400);
+}
+q('sheetClose').onclick=closeSheet;
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeSheet(); });
+function openPractice(id){
+  const T={call:'Phone',msg:'Messages',contacts:'Contacts',video:'Video Call',qr:'Scan QR',upi:'UPI Pay',settings:'Settings',maps:'Maps',gallery:'Gallery',fakemsg:'Fake Message',fakecall:'Suspicious Call',pwd:'Password'};
+  const body=openSheet(T[id]||'Phone');
+  body.innerHTML=`<p class="pcap" id="pcap"></p>`+phoneHTML();
+  q('nHome').onclick=launcher; q('nRec').onclick=launcher; q('nBack').onclick=()=>pBack?pBack():closeSheet();
+  ({call:appCall,msg:appMsg,contacts:appContacts,video:appVideo,qr:appQR,upi:()=>appPay('City Electricity Board','cityelec@bank'),settings:appSettings,maps:appMaps,gallery:appGallery,fakemsg:appSpam,fakecall:appFakeCall,pwd:appPwd}[id]||launcher)();
+}
+function launcher(){
+  hint('This is your practice phone. Tap an app to open it.');
+  const apps=[['call','Phone','#2E7D32',appCall],['chat','Messages','#1976D2',appMsg],['qr','Camera','#455A64',appQR],['wallet','UPI Pay','#5E35B1',()=>appPay('City Electricity Board','cityelec@bank')],['lock','Security','#00796B',appPwd]];
+  show(`<div class="plaunch">${apps.map((a,i)=>`<button class="papp" data-i="${i}"><span class="picon" style="background:${a[2]}">${ic(a[0],32)}</span>${a[1]}</button>`).join('')}</div>`,true);
+  document.querySelectorAll('.papp').forEach(b=>b.onclick=()=>apps[b.dataset.i][3]());
+}
+/* Phone app */
+function appCall(){
+  hint('Tap a family member to call them, or tap the round keypad button.');
+  show(`<div class="pbar">Phone</div><div class="plist">${PEOPLE.map((c,i)=>`<button class="prow" data-i="${i}"><span class="pav" style="background:${c.c}">${c.a}</span><span class="pt"><b>${c.n}</b><small>${c.r} · ${c.num}</small></span><span class="pgreen">${ic('call',22)}</span></button>`).join('')}</div><button class="pfab" id="pKeys" aria-label="Keypad">${ic('dial',28)}</button>`,false,launcher);
+  document.querySelectorAll('.prow').forEach(b=>b.onclick=()=>inCall(PEOPLE[b.dataset.i],appCall));
+  q('pKeys').onclick=keypad;
+}
+function keypad(){
+  let n=''; hint('Tap the numbers, then the green call button.');
+  show(`<div class="pbar">Keypad</div><div class="pnum" id="pNum">&nbsp;</div><div class="pkeys">${'123456789*0#'.split('').map(k=>`<button data-k="${k}">${k}</button>`).join('')}</div><div class="pact"><span></span><button class="pcallbig" id="pDial" aria-label="Call">${ic('call',32)}</button><button class="pdel" id="pDel" aria-label="Delete">${ic('bksp',28)}</button></div>`,false,appCall);
+  const up=()=>q('pNum').textContent=n||'\u00A0';
+  document.querySelectorAll('.pkeys [data-k]').forEach(b=>b.onclick=()=>{if(n.length<12){n+=b.dataset.k;up();}});
+  q('pDel').onclick=()=>{n=n.slice(0,-1);up();};
+  q('pDial').onclick=()=>{ if(!n) return hint('Type a number first.'); const f=PEOPLE.find(c=>c.num.replace(/\s/g,'')===n); inCall(f||{n:n,r:'Practice number',a:'👤',c:'#CFD8DC'},keypad); };
+}
+function inCall(c,back){
+  hint('Calling… tap the big red button to end the call.');
+  const end=()=>{clearInterval(pTimer);back();hint('Call ended. Well done! 🎉','ok');};
+  show(`<div class="pincall"><div class="pav big" style="background:${c.c}">${c.a}</div><h2>${c.n}</h2><p id="pSt">Calling…</p><div class="pctrls">${[['vol','Speaker'],['mic','Mute'],['dial','Keypad'],['vid','Video']].map(x=>`<button class="pctrl"><span>${ic(x[0],26)}</span>${x[1]}</button>`).join('')}</div><button class="pendbig" id="pEnd" aria-label="End call">${ic('end',34)}</button></div>`,true,end);
+  document.querySelectorAll('.pctrl').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
+  q('pEnd').onclick=end;
+  let s=0; const st=q('pSt');
+  setTimeout(()=>{ if(!document.body.contains(st)) return; st.textContent='00:00'; hint('Connected! You can talk now. Tap the red button when finished.');
+    pTimer=setInterval(()=>{ if(!document.body.contains(st)){clearInterval(pTimer);return;} s++; st.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); },1000); },2000);
+}
+/* Messages app */
+function appMsg(){
+  hint('Type a message and tap the blue send arrow. Tap the paper-clip to send a photo.');
+  show(`<div class="pbar"><span class="pav sm" style="background:#DCEBFA">👨</span> Rahul (Son)</div><div class="pchat" id="pChat"><div class="pbub in">Namaste! How are you?</div></div><div class="pcomp"><button class="pclip" id="pPhoto" aria-label="Attach photo">${ic('clip',24)}</button><input id="pIn" placeholder="Text message"><button class="psend" id="pSend" aria-label="Send">${ic('send',22)}</button></div>`,false,launcher);
+  const add=(t,c)=>{const d=document.createElement('div');d.className='pbub '+c;d.textContent=t;q('pChat').appendChild(d);q('pChat').scrollTop=99999;};
+  const send=t=>{ add(t,'out'); hint('Message sent! (Practice only — nobody received it.) ✓','ok'); setTimeout(()=>{ if(q('pChat')) add('Thank you! ❤️','in'); },1000); };
+  q('pSend').onclick=()=>{const v=q('pIn').value.trim(); if(!v) return hint('Type something first.'); send(v); q('pIn').value='';};
+  q('pPhoto').onclick=()=>send('📷 Photo');
+}
+function appSpam(){
+  hint('Read this message carefully. What would you do?');
+  show(`<div class="pbar">Messages</div><div class="pchat"><div class="pbub in"><small>AX-PRIZE99</small><br>Congratulations! You won ₹50,000. Click this link now to claim: <u class="plink">bit.ly/xyz123</u></div></div><div class="pchips"><button class="pchip" data-ok="0">Open the link</button><button class="pchip" data-ok="1">Delete, block &amp; report spam</button></div>`,false,launcher);
+  chips('Correct! 🎉 Prize messages with links are scams. Never click them.','Try Again 😊 Do not click unknown links — they can steal your money.');
+}
+function appFakeCall(){
+  hint('Your phone is ringing. An unknown number is calling.');
+  show(`<div class="pincall"><small>Incoming call</small><div class="pav big" style="background:#CFD8DC">👤</div><h2>+91 00000 99999</h2><p>Unknown number · Maybe spam</p><div class="pans"><button class="pendbig" id="pDec" aria-label="Decline">${ic('end',34)}</button><button class="pcallbig" id="pAns" aria-label="Answer">${ic('call',34)}</button></div></div>`,true,launcher);
+  q('pDec').onclick=()=>{launcher();hint('Good! It is safe to decline unknown numbers. 🎉','ok');};
+  q('pAns').onclick=()=>{
+    hint('The caller wants your OTP. What do you do?');
+    show(`<div class="pincall"><div class="pav big" style="background:#CFD8DC">👤</div><h3>+91 00000 99999</h3><div class="pbub in dk">“I am calling from your bank. Your account will be blocked. Tell me the OTP you just received.”</div><div class="pchips"><button class="pchip" data-ok="0">Tell them the OTP</button><button class="pchip" data-ok="1">Hang up and call the bank's official number</button></div></div>`,true,launcher);
+    chips('Correct! 🎉 Banks never ask for your OTP. Hang up and call the number on your bank card.','Try Again 😊 Never share your OTP — even if the caller says they are from your bank.');
+  };
+}
+
+/* Contacts app */
+function appContacts(){
+  hint('Tap + to add a new family member\'s number.');
+  show(`<div class="pbar">Contacts</div><div class="plist" id="cList">${PEOPLE.map(c=>`<div class="prow"><span class="pav" style="background:${c.c}">${c.a}</span><span class="pt"><b>${c.n}</b><small>${c.r} · ${c.num}</small></span></div>`).join('')}</div><button class="pfab" id="cAdd" aria-label="Add contact">${ic('plus',28)}</button>`,false,launcher);
+  q('cAdd').onclick=()=>{
+    hint('Fill in a name and number, then tap Save.');
+    show(`<div class="pbar">Add New Contact</div><div class="ppw"><input id="cName" placeholder="Full Name"><input id="cNum" placeholder="Phone Number" inputmode="numeric"><button class="pbtn" id="cSave">Save Contact</button></div>`,false,appContacts);
+    q('cSave').onclick=()=>{
+      if(!q('cName').value.trim()||!q('cNum').value.trim()) return hint('Please fill in both fields.');
+      hint('Contact saved! ✓','ok'); appContacts();
+    };
+  };
+}
+/* Video Call app */
+function appVideo(){
+  hint('Tap \'New Meeting\' to start a practice video call, then share the link with family.');
+  show(`<div class="pbar">Google Meet</div><div class="pcam"><div class="pview" style="background:#202124"><span style="font-size:3em">🧓</span></div><p>Your camera preview</p><button class="pbtn" id="vNew">New Meeting</button></div>`,true,launcher);
+  q('vNew').onclick=()=>{
+    hint('Connecting…');
+    show(`<div class="pincall"><div class="pav big" style="background:#DCEBFA">🧓</div><h2 id="vSt">Connecting…</h2><p>Meeting link copied! Share it with family so they can join.</p><div class="pctrls">${[['mic','Mute'],['vid','Video']].map(x=>`<button class="pctrl"><span>${ic(x[0],26)}</span>${x[1]}</button>`).join('')}</div><button class="pendbig" id="vEnd" aria-label="Leave meeting">${ic('end',34)}</button></div>`,true,appVideo);
+    document.querySelectorAll('.pctrl').forEach(b=>b.onclick=()=>b.classList.toggle('on'));
+    setTimeout(()=>{ if(q('vSt')) q('vSt').textContent='Connected'; },1800);
+    q('vEnd').onclick=()=>{appVideo();hint('Meeting ended. Great practice! 🎉','ok');};
+  };
+}
+/* Settings app */
+function appSettings(){
+  hint('Try changing the settings below. Nothing here affects your real phone.');
+  let big=false, wifi=false, vol=50;
+  const render=()=>show(`<div class="pbar">Settings</div><div class="plist">
+    <div class="prow"><span class="pav" style="background:#E8EAF6">${ic('gear',22)}</span><span class="pt"><b>Text Size</b><small>${big?'Large':'Small'}</small></span><button class="pchip" id="sBig" style="width:auto">${big?'Large':'Small'}</button></div>
+    <div class="prow"><span class="pav" style="background:#E3F2FD">${ic('wifi',22)}</span><span class="pt"><b>Wi-Fi</b><small>${wifi?'On':'Off'}</small></span><button class="pchip" id="sWifi" style="width:auto">${wifi?'On':'Off'}</button></div>
+    <div class="prow"><span class="pav" style="background:#FCE4EC">${ic('vol',22)}</span><span class="pt"><b>Ringtone Volume</b></span></div>
+    <input id="sVol" type="range" min="0" max="100" value="${vol}" style="width:88%;margin:0 6% 14px">
+    </div>`,false,launcher);
+  render();
+  const wire=()=>{
+    q('sBig').onclick=()=>{big=!big;render();wire();hint(big?'Text made larger (practice only).':'Text made smaller (practice only).');};
+    q('sWifi').onclick=()=>{wifi=!wifi;render();wire(); if(wifi) hint('Nice! Wi-Fi is now on. Your phone can use the internet.','ok'); else hint('Wi-Fi turned off (practice only).');};
+    q('sVol').oninput=()=>hint('Ringtone volume changed (practice only).');
+  };
+  wire();
+}
+/* Maps app */
+function appMaps(){
+  hint('Search for a place, like \'hospital\' or \'market\'.');
+  show(`<div class="pbar">Maps</div><div class="ppw"><input id="mQ" placeholder="Search a place"><button class="pbtn" id="mGo">${ic('mappin',18)} Search</button></div>`,true,launcher);
+  q('mGo').onclick=()=>{
+    const v=q('mQ').value.trim()||'Market'; 
+    hint('Found it! This pin shows where it is. Tap Directions to see the way there.','ok');
+    show(`<div class="pcam"><div class="pview" style="background:#B7D9C3">${ic('mappin',60)}</div><h3>${v}</h3><p>0.8 km away · Practice result</p><button class="pbtn" id="mDir">Get Directions</button></div>`,true,appMaps);
+    q('mDir').onclick=()=>hint('Directions shown! (Practice only.)','ok');
+  };
+}
+/* Gallery app */
+const GPHOTOS=[['🌼','#FDE8D8'],['👨\u200d👩\u200d👧','#DCEBFA'],['🎂','#FBE3EC'],['🏡','#E4F3DF'],['🐕','#FFF0D2'],['🌅','#E9E3F7']];
+function appGallery(){
+  hint('Tap a photo to view it. You can share or delete it safely — this is practice only.');
+  show(`<div class="pbar">Gallery</div><div class="pgrid">${GPHOTOS.map((p,i)=>`<button class="pthumb" data-i="${i}" style="background:${p[1]}">${p[0]}</button>`).join('')}</div>`,false,launcher);
+  document.querySelectorAll('.pthumb').forEach(b=>b.onclick=()=>{
+    const p=GPHOTOS[b.dataset.i];
+    show(`<div class="pcam"><div class="pview" style="background:${p[1]};font-size:5em">${p[0]}</div><div class="pctrls" style="margin-top:10px"><button class="pctrl" id="gShare"><span>${ic('send',22)}</span>Share Photo</button><button class="pctrl" id="gDel"><span>${ic('trash',22)}</span>Delete Photo</button></div></div>`,false,()=>{show('',false,launcher);appGallery();});
+    q('gShare').onclick=()=>hint('Photo shared! ✓','ok');
+    q('gDel').onclick=()=>{hint('Photo deleted. (Practice only — nothing real was removed.)','ok');appGallery();};
+  });
+}
+
+/* Camera + UPI Pay */
+function qrSVG(){
+  let r='';
+  for(let i=0;i<13;i++)for(let j=0;j<13;j++){
+    const fin=[[0,0],[0,9],[9,0]].find(f=>i>=f[0]&&i<f[0]+4&&j>=f[1]&&j<f[1]+4);
+    const on=fin?(i-fin[0]===0||i-fin[0]===3||j-fin[1]===0||j-fin[1]===3):((i*7+j*13+i*j)%3===0);
+    if(on) r+=`<rect x="${j}" y="${i}" width="1" height="1"/>`;
+  }
+  return `<svg viewBox="0 0 13 13" width="140" height="140" style="background:#fff;padding:8px;border-radius:8px" fill="#111">${r}</svg>`;
+}
+function appQR(){
+  hint('Point the camera at the code, then tap the big white round button.');
+  show(`<div class="pcam"><div class="pview"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>${qrSVG()}</div><p>Point at a QR code</p><button class="pshut" id="pShut" aria-label="Scan"></button></div>`,true,launcher);
+  q('pShut').onclick=()=>{ appPay('Ramesh Kumar Stores','ramesh@upi'); hint('Code scanned! Check that the name is right before you pay.','ok'); };
+}
+function appPay(name,uid){
+  hint("Check the receiver's name is correct. Then type an amount.");
+  show(`<div class="pbar">Pay</div><div class="ppay"><div class="pav big" style="background:#E8EAF6">🏪</div><h3>${name}</h3><p class="pver">${ic('ok',18)} Verified · ${uid}</p><div class="pamt">₹ <input id="pAmt" type="number" inputmode="numeric" placeholder="0"></div><button class="pbtn" id="pGo">Proceed to pay</button><p class="psmall">Practice only — no real money.</p></div>`,false,launcher);
+  q('pGo').onclick=()=>{ const a=+q('pAmt').value; if(!a) return hint('Please type an amount first.'); pin(name,uid,a); };
+}
+function pin(name,uid,a){
+  hint('Type any 4 numbers as a practice PIN. In real life, never tell your PIN to anyone.');
+  let p='';
+  show(`<div class="pbar">Enter UPI PIN</div><div class="pwarn">${ic('warn',20)} Never share your UPI PIN or OTP with anyone.</div><p class="pc">Paying ₹${a} to ${name}</p><div class="pdots" id="pDots"><i></i><i></i><i></i><i></i></div><div class="pkeys">${'123456789'.split('').map(k=>`<button data-k="${k}">${k}</button>`).join('')}<span></span><button data-k="0">0</button><button id="pX" aria-label="Delete">${ic('bksp',24)}</button></div>`,false,()=>appPay(name,uid));
+  const up=()=>document.querySelectorAll('#pDots i').forEach((d,i)=>d.classList.toggle('f',i<p.length));
+  document.querySelectorAll('.pkeys [data-k]').forEach(b=>b.onclick=()=>{ if(p.length<4){p+=b.dataset.k;up();} if(p.length===4) setTimeout(()=>done(name,a),250); });
+  q('pX').onclick=()=>{p=p.slice(0,-1);up();};
+}
+function done(name,a){
+  hint('Well done! You finished a practice payment. 🎉','ok');
+  show(`<div class="pdone"><div class="pchk">${ic('ok',90)}</div><h2>Payment Successful</h2><p>₹${a} paid to ${name}</p><small>Practice only — no real money was sent.</small><button class="pbtn" id="pFin">Done</button></div>`,false,launcher);
+  q('pFin').onclick=launcher;
+}
+/* Password */
+function appPwd(){
+  hint('Type a new password. Do not type your real password here. Make all four ticks turn green.');
+  show(`<div class="pbar">Create password</div><div class="ppw"><input id="pPw" type="text" placeholder="New password" autocomplete="off"><div class="pmeter"><i></i><i></i><i></i><i></i></div><p id="pLvl">Too weak</p><ul class="pchk">${['At least 8 characters','A number (0-9)','A capital letter (A-Z)','A symbol (@ # ! $)'].map(t=>`<li>${ic('ok',20)}<span>${t}</span></li>`).join('')}</ul></div>`,false,launcher);
+  q('pPw').oninput=e=>{
+    const v=e.target.value, r=[v.length>=8,/\d/.test(v),/[A-Z]/.test(v),/[^A-Za-z0-9]/.test(v)], n=r.filter(Boolean).length;
+    document.querySelectorAll('.pchk li').forEach((li,i)=>li.classList.toggle('y',r[i]));
+    document.querySelectorAll('.pmeter i').forEach((m,i)=>m.classList.toggle('y',i<n));
+    q('pLvl').textContent=['Too weak','Too weak','Fair','Good','Strong 🎉'][n];
+    if(n===4) hint('Excellent! That is a strong password. 🎉','ok');
+  };
+}
+
+const HOME_APPS=[['call','Phone','#2E7D32','call'],['chat','Messages','#1976D2','msg'],['person','Contacts','#3949AB','contacts'],['vid','Video Call','#00897B','video'],['qr','Scan QR','#455A64','qr'],['wallet','UPI Pay','#5E35B1','upi'],['gear','Settings','#607D8B','settings'],['mappin','Maps','#43A047','maps'],['gallery','Gallery','#8E24AA','gallery'],['warn','Fake Message','#EF6C00','fakemsg'],['call','Suspicious Call','#C62828','fakecall'],['lock','Password','#00796B','pwd']];
+q('practiceGrid').className='homescreen';
+q('practiceGrid').innerHTML=HOME_APPS.map(a=>`<button class="happ" data-p="${a[3]}"><span class="hicon" style="background:${a[2]}">${ic(a[0],40)}</span>${a[1]}</button>`).join('');
+q('practiceGrid').querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>openPractice(b.dataset.p));
+
+
+/* ---------- Game: Spot the Scam ---------- */
+const GAME_ITEMS=[
+ {t:"SMS: 'Your bank account is blocked. Click here to unblock: bit.ly/456xyz'",scam:true},
+ {t:"SMS: 'Hi Dad, this is Rahul. Call me when free.'",scam:false},
+ {t:"Call: 'I am from RBI. Share your OTP to stop fraud on your account.'",scam:true},
+ {t:"WhatsApp: 'Mom sent you a photo of the grandchildren.'",scam:false},
+ {t:"SMS: 'You have won a lottery of ₹10,00,000! Pay ₹500 fee to claim.'",scam:true},
+ {t:"Email: 'Your electricity bill of ₹450 is due on 5th. Pay via official app.'",scam:false},
+ {t:"Call: 'This is Amazon. Your parcel is stuck, pay ₹99 to release it.'",scam:true},
+ {t:"SMS: 'Your OTP for login is 4821. Do not share with anyone.'",scam:false},
+ {t:"WhatsApp: 'Send me your UPI PIN so I can send you money urgently.'",scam:true},
+ {t:"Call: 'Doctor's clinic confirming your appointment tomorrow at 5 PM.'",scam:false}
+];
+let gHigh=0; try{gHigh=+localStorage.getItem('digitalEasyGameHigh')||0;}catch(e){}
+function gameHome(){
+  const c=q('gameCard');
+  c.innerHTML=`<h2>Spot the Scam</h2><p>Read each message and decide: is it safe, or a scam?</p><p>High Score: <strong id="gameHigh">${gHigh}</strong></p><button class="bigbtn" id="gameStart">Start Game ▸</button>`;
+  q('gameStart').onclick=gameRound.bind(null,shuffle(GAME_ITEMS.slice()),0,0);
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function gameRound(items,idx,score){
+  const c=q('gameCard');
+  if(idx>=items.length){
+    const isHigh=score>gHigh; if(isHigh){gHigh=score; try{localStorage.setItem('digitalEasyGameHigh',gHigh);}catch(e){}}
+    c.innerHTML=`<h2>Game Over</h2><p>Score: ${score} / ${items.length}</p>${isHigh?'<p class="chip">New High Score! 🏆</p>':''}<p>High Score: <strong>${gHigh}</strong></p><button class="bigbtn" id="gameAgain">Play Again ▸</button>`;
+    q('gameAgain').onclick=gameRound.bind(null,shuffle(GAME_ITEMS.slice()),0,0);
+    return;
+  }
+  const it=items[idx];
+  c.innerHTML=`<p>Round ${idx+1} of ${items.length} &middot; Score: ${score}</p>
+    <div class="sim" style="font-size:1.15em">${it.t}</div>
+    <div class="pchips"><button class="pchip" data-ok="1">🚩 It's a Scam</button><button class="pchip" data-ok="0">✅ It's Safe</button></div>
+    <p class="feedback" id="gFb"></p>`;
+  c.querySelectorAll('.pchip').forEach(b=>b.onclick=()=>{
+    const said=b.dataset.ok==='1'; const ok=said===it.scam;
+    c.querySelectorAll('.pchip').forEach(x=>x.classList.remove('good','bad')); b.classList.add(ok?'good':'bad');
+    q('gFb').textContent = ok? 'Correct! 🎉' : 'Try Again 😊'; q('gFb').className='feedback '+(ok?'ok':'bad');
+    setTimeout(()=>gameRound(items,idx+1,score+(ok?1:0)),900);
+  });
+}
+
+/* ---------- Quiz ---------- */
+function renderQuiz(){
+  document.getElementById('quizList').innerHTML = MODULES.map(m=>{
+    const score = state.scores[m.id];
+    return `<div class="modcard"><div class="icon">${m.icon}</div><h3>${m.title} Quiz</h3>
+      ${score!==undefined?`<span class="chip">Score: ${score}/${QUIZZES[m.id].length}</span>`:''}
+      <button data-q="${m.id}">${score!==undefined?'Retake Quiz':'Start Quiz'} ▸</button></div>`;
+  }).join('');
+  document.getElementById('quizList').querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click',()=>openQuiz(b.dataset.q)));
+  document.getElementById('badgeRow').innerHTML = BADGES.map(b=>`<span class="badgepill ${state.completed[b.id]?'earned':''}">${b.label}</span>`).join('');
+  updateProgressUI();
+}
+function openQuiz(mid){
+  const qs = QUIZZES[mid];
+  let idx=0, correctCount=0;
+  const det = openSheet('Quiz');
+  function renderQ(){
+    if(idx>=qs.length){
+      state.scores[mid]=correctCount; state.completed[mid]=true; save();
+      renderQuiz(); renderModules(); renderHomeGrid();
+      const allDone = MODULES.every(m=>state.completed[m.id]);
+      det.innerHTML = `<div class="card"><h2>Quiz Complete!</h2><p>You scored ${correctCount} out of ${qs.length}.</p>
+        ${allDone?'<h2 style="color:var(--coral)">Congratulations! You are now a Digital Champion! 🎉</h2>':''}
+        <button class="backlink" id="closeQ">◂ Back to Quizzes</button></div>`;
+      document.getElementById('closeQ').addEventListener('click',closeSheet);
+      return;
+    }
+    const q=qs[idx];
+    det.innerHTML = `<div class="card qcard"><p>Question ${idx+1} of ${qs.length}</p><h3>${q.q}</h3>
+      ${q.opts.map((o,i)=>`<button class="qopt" data-i="${i}">${o}</button>`).join('')}
+      <p class="feedback" id="qFeedback"></p>
+      <button class="bigbtn" id="nextQ" style="display:none">Next ▸</button></div>`;
+    det.querySelectorAll('.qopt').forEach(b=>b.addEventListener('click',()=>{
+      const i=Number(b.dataset.i); const ok = i===q.a;
+      if(ok) correctCount++;
+      det.querySelectorAll('.qopt').forEach(x=>{x.disabled=true; if(Number(x.dataset.i)===q.a) x.classList.add('correct'); });
+      if(!ok) b.classList.add('wrong');
+      const fb=document.getElementById('qFeedback'); fb.textContent = ok? 'Correct! 🎉' : 'Try Again 😊';
+      fb.className='feedback '+(ok?'ok':'bad');
+      document.getElementById('nextQ').style.display='inline-block';
+    }));
+    document.getElementById('nextQ').addEventListener('click',()=>{idx++; renderQ();});
+  }
+  renderQ();
+  
+}
+
+function updateProgressUI(){
+  const total=MODULES.length;
+  const done=MODULES.filter(m=>state.completed[m.id]).length;
+  const pct=Math.round(done/total*100);
+  ['homeProgressBar','quizProgressBar'].forEach(id=>{const el=document.getElementById(id); if(el) el.style.width=pct+'%';});
+  ['homeProgressText','quizProgressText'].forEach(id=>{const el=document.getElementById(id); if(el) el.textContent=`${done} of ${total} modules completed`;});
+  const scoreEl=document.getElementById('quizScoreText');
+  if(scoreEl){ const total_score=Object.values(state.scores).reduce((a,b)=>a+b,0); scoreEl.textContent=`Total score: ${total_score}`; }
+}
+
+document.getElementById('needHelpBtn').addEventListener('click',()=>alert(tx('For help, ask a family member to sit with you, or contact your local digital literacy center.')));
+document.getElementById('replayBtn').addEventListener('click',()=>{showPage('modules');});
+
+/* ---------- Init ---------- */
+renderHomeGrid();
+renderModules();
+/* ---------- Install as app (PWA) ---------- */
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+let deferredInstall=null;
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferredInstall=e; document.getElementById('installBtn').style.display='inline-block'; });
+document.getElementById('installBtn').addEventListener('click',async()=>{ if(!deferredInstall) return; deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall=null; document.getElementById('installBtn').style.display='none'; });
+window.addEventListener('appinstalled',()=>{ document.getElementById('installBtn').style.display='none'; });
+
+/* ---------- Full-site language support (English / Hindi / Marathi) ---------- */
+const ROWS = [
+["🏠 Home","🏠 होम","🏠 मुख्यपृष्ठ"],["🔊 Read Aloud","🔊 पढ़कर सुनाएँ","🔊 वाचून दाखवा"],["🌗 Contrast","🌗 कंट्रास्ट","🌗 कॉन्ट्रास्ट"],
+["Home","होम","मुख्यपृष्ठ"],["Modules","पाठ","धडे"],["Practice Zone","अभ्यास क्षेत्र","सराव विभाग"],
+["Quiz & Progress","प्रश्नोत्तरी और प्रगति","प्रश्नमंजुषा आणि प्रगती"],["Help & Support","सहायता","मदत आणि सहाय्य"],
+["Learn Digital Skills. One Simple Step at a Time.","डिजिटल कौशल सीखें। एक समय में एक सरल कदम।","डिजिटल कौशल्ये शिका. एका वेळी एक सोपे पाऊल."],
+["Simple digital lessons designed especially for senior citizens.","वरिष्ठ नागरिकों के लिए विशेष रूप से बनाए गए सरल डिजिटल पाठ।","ज्येष्ठ नागरिकांसाठी खास तयार केलेले सोपे डिजिटल धडे."],
+["Start Learning ▸","सीखना शुरू करें ▸","शिकायला सुरू करा ▸"],["How It Works","यह कैसे काम करता है","हे कसे चालते"],
+["Watch","देखें","पहा"],["a simple explanation of a skill.","किसी कौशल की सरल व्याख्या।","एखाद्या कौशल्याचे सोपे स्पष्टीकरण."],
+["Learn","सीखें","शिका"],["the steps, one at a time.","कदम-दर-कदम, एक-एक करके।","एकेक पायरी, एका वेळी एक."],
+["Practice","अभ्यास","सराव"],["safely — nothing real happens.","सुरक्षित रूप से — कुछ भी असली नहीं होता।","सुरक्षितपणे — काहीही खरे घडत नाही."],
+["Answer","उत्तर दें","उत्तर द्या"],["a few easy questions.","कुछ आसान प्रश्नों के।","काही सोप्या प्रश्नांची."],
+["Complete","पूरा करें","पूर्ण करा"],["the lesson and earn a badge.","पाठ पूरा करें और बैज पाएँ।","धडा पूर्ण करा आणि बॅज मिळवा."],
+["Your Learning Modules","आपके सीखने के पाठ","तुमचे शिकण्याचे धडे"],["Your Progress","आपकी प्रगति","तुमची प्रगती"],
+["Why Learn Digital Skills?","डिजिटल कौशल क्यों सीखें?","डिजिटल कौशल्ये का शिकावी?"],
+["Stay in touch with family through calls and video","कॉल और वीडियो से परिवार के संपर्क में रहें","कॉल आणि व्हिडिओने कुटुंबाच्या संपर्कात रहा"],
+["Pay bills and send money without visiting a bank","बैंक गए बिना बिल भरें और पैसे भेजें","बँकेत न जाता बिले भरा आणि पैसे पाठवा"],
+["Find information and services quickly","जानकारी और सेवाएँ जल्दी पाएँ","माहिती आणि सेवा पटकन मिळवा"],
+["Feel confident and independent every day","हर दिन आत्मविश्वासी और स्वतंत्र महसूस करें","रोज आत्मविश्वासू आणि स्वावलंबी वाटा"],
+["⚠️ Emergency Digital Safety Tips: Never share your OTP or PIN. Banks never call asking for your OTP. If unsure, hang up and call your bank's official number.","⚠️ आपातकालीन डिजिटल सुरक्षा सुझाव: अपना ओटीपी या पिन कभी साझा न करें। बैंक कभी फोन करके ओटीपी नहीं माँगते। संदेह हो तो फोन काट दें और बैंक के आधिकारिक नंबर पर कॉल करें।","⚠️ आपत्कालीन डिजिटल सुरक्षा सूचना: तुमचा ओटीपी किंवा पिन कधीही कोणाला सांगू नका. बँका कधीही फोन करून ओटीपी मागत नाहीत. शंका असल्यास फोन कट करा आणि बँकेच्या अधिकृत नंबरवर कॉल करा."],
+["Learning Modules","सीखने के पाठ","शिकण्याचे धडे"],["Choose a module to begin. You can stop and continue anytime.","शुरू करने के लिए एक पाठ चुनें। आप कभी भी रुक कर फिर जारी रख सकते हैं।","सुरू करण्यासाठी एक धडा निवडा. तुम्ही केव्हाही थांबून पुन्हा सुरू करू शकता."],
+["Smartphone Basics","स्मार्टफोन की बुनियादी बातें","स्मार्टफोनची मूलभूत माहिती"],["WhatsApp & Messaging","व्हाट्सऐप और मैसेज","व्हॉट्सअॅप आणि संदेश"],
+["UPI & Digital Payments","यूपीआई और डिजिटल भुगतान","यूपीआय आणि डिजिटल पेमेंट"],["Internet & Google","इंटरनेट और गूगल","इंटरनेट आणि गूगल"],
+["Photos & Video Calls","फोटो और वीडियो कॉल","फोटो आणि व्हिडिओ कॉल"],["Online Safety & Scam Awareness","ऑनलाइन सुरक्षा और ठगी से बचाव","ऑनलाइन सुरक्षा आणि फसवणुकीपासून बचाव"],
+["Calls, contacts, volume, Wi-Fi and settings.","कॉल, संपर्क, आवाज़, वाई-फ़ाई और सेटिंग्स।","कॉल, संपर्क, आवाज, वाय-फाय आणि सेटिंग्ज."],
+["Messages, photos, voice notes and video calls.","संदेश, फोटो, वॉइस नोट और वीडियो कॉल।","संदेश, फोटो, व्हॉइस नोट आणि व्हिडिओ कॉल."],
+["Scan, pay, and check payments safely.","स्कैन करें, भुगतान करें और सुरक्षित रूप से जाँचें।","स्कॅन करा, पैसे द्या आणि सुरक्षितपणे तपासा."],
+["Browsing, searching, and staying safe online.","ब्राउज़ करें, खोजें और ऑनलाइन सुरक्षित रहें।","ब्राउझ करा, शोधा आणि ऑनलाइन सुरक्षित रहा."],
+["Taking, sharing and deleting photos, and video calls.","फोटो लेना, भेजना, हटाना और वीडियो कॉल।","फोटो काढणे, शेअर करणे, हटवणे आणि व्हिडिओ कॉल."],
+["OTP, passwords, fake calls and messages.","ओटीपी, पासवर्ड, नकली कॉल और संदेश।","ओटीपी, पासवर्ड, बनावट कॉल आणि संदेश."],
+["✓ Completed","✓ पूरा हुआ","✓ पूर्ण झाले"],["Learn More ▸","और जानें ▸","अधिक जाणून घ्या ▸"],
+["◂ Back to Modules","◂ पाठों पर वापस","◂ धड्यांकडे परत"],["✓ Lesson Completed","✓ पाठ पूरा हुआ","✓ धडा पूर्ण झाला"],
+["Lesson Completed! ✓ Great job.","पाठ पूरा हुआ! ✓ बहुत बढ़िया।","धडा पूर्ण झाला! ✓ छान काम."],
+["⚠️ Never share your UPI PIN or OTP with anyone — not even your bank.","⚠️ अपना यूपीआई पिन या ओटीपी किसी के साथ साझा न करें — बैंक के साथ भी नहीं।","⚠️ तुमचा यूपीआय पिन किंवा ओटीपी कोणालाही सांगू नका — बँकेलाही नाही."],
+["Simulated Chat","नकली चैट (अभ्यास)","सराव चॅट"],["📎 Send Photo","📎 फोटो भेजें","📎 फोटो पाठवा"],
+["Fake Payment Simulator (no real money)","नकली भुगतान अभ्यास (असली पैसा नहीं)","सराव पेमेंट (खरे पैसे नाहीत)"],["Pay","भुगतान करें","पैसे द्या"],
+["Simulated Search","नकली खोज (अभ्यास)","सराव शोध"],["Search","खोजें","शोधा"],["Practice a Call","कॉल का अभ्यास","कॉलचा सराव"],["📞 Call Grandson","📞 पोते को कॉल करें","📞 नातवाला कॉल करा"],
+["You receive a call saying: \"I am calling from your bank. Tell me the OTP you just received.\"","आपको फोन आता है: \"मैं आपके बैंक से बोल रहा हूँ। आपको अभी जो ओटीपी मिला है, वह बताइए।\"","तुम्हाला फोन येतो: \"मी तुमच्या बँकेतून बोलतोय. तुम्हाला आत्ता आलेला ओटीपी सांगा.\""],
+["A. Tell them the OTP","A. उन्हें ओटीपी बता दें","A. त्यांना ओटीपी सांगा"],
+["B. End the call and contact the bank through its official number","B. कॉल काटें और बैंक के आधिकारिक नंबर पर संपर्क करें","B. कॉल कट करा आणि बँकेच्या अधिकृत नंबरवर संपर्क साधा"],
+["Correct! 🎉","सही! 🎉","बरोबर! 🎉"],["Try Again 😊","फिर कोशिश करें 😊","पुन्हा प्रयत्न करा 😊"],
+["Correct! 🎉 Never share an OTP over the phone.","सही! 🎉 फोन पर कभी ओटीपी साझा न करें।","बरोबर! 🎉 फोनवर कधीही ओटीपी सांगू नका."],
+["Try Again 😊 Never share your OTP, even with someone claiming to be from your bank.","फिर कोशिश करें 😊 बैंक का बताने वाले को भी ओटीपी न दें।","पुन्हा प्रयत्न करा 😊 बँकेचा असल्याचा दावा करणाऱ्यालाही ओटीपी देऊ नका."],
+["Practice Zone 🎯","अभ्यास क्षेत्र 🎯","सराव विभाग 🎯"],["Try these safely. Nothing here sends real messages, calls, or money.","इन्हें सुरक्षित रूप से आज़माएँ। यहाँ कुछ भी असली संदेश, कॉल या पैसा नहीं भेजता।","हे सुरक्षितपणे करून पहा. येथे खरे संदेश, कॉल किंवा पैसे पाठवले जात नाहीत."],
+["Practice a Phone Call","फोन कॉल का अभ्यास","फोन कॉलचा सराव"],["Practice Sending a Message","संदेश भेजने का अभ्यास","संदेश पाठवण्याचा सराव"],
+["Practice Scanning a QR Code","क्यूआर कोड स्कैन का अभ्यास","क्यूआर कोड स्कॅनचा सराव"],["Practice a UPI Payment","यूपीआई भुगतान का अभ्यास","यूपीआय पेमेंटचा सराव"],
+["Identify a Fake Message","नकली संदेश पहचानें","बनावट संदेश ओळखा"],["Identify a Suspicious Call","संदिग्ध कॉल पहचानें","संशयास्पद कॉल ओळखा"],["Create a Strong Password","मज़बूत पासवर्ड बनाएँ","मजबूत पासवर्ड बनवा"],
+["Try It ▸","आज़माएँ ▸","करून पहा ▸"],["◂ Back to Practice Zone","◂ अभ्यास क्षेत्र पर वापस","◂ सराव विभागाकडे परत"],
+["Quiz & Progress 🏆","प्रश्नोत्तरी और प्रगति 🏆","प्रश्नमंजुषा आणि प्रगती 🏆"],["Badges","बैज","बॅज"],["Module Quizzes","पाठ प्रश्नोत्तरी","धडा प्रश्नमंजुषा"],
+["Start Quiz ▸","प्रश्नोत्तरी शुरू करें ▸","प्रश्नमंजुषा सुरू करा ▸"],["Retake Quiz ▸","फिर से प्रश्नोत्तरी दें ▸","पुन्हा प्रश्नमंजुषा द्या ▸"],
+["Next ▸","अगला ▸","पुढे ▸"],["Quiz Complete!","प्रश्नोत्तरी पूरी हुई!","प्रश्नमंजुषा पूर्ण!"],["◂ Back to Quizzes","◂ प्रश्नोत्तरी पर वापस","◂ प्रश्नमंजुषेकडे परत"],
+["Congratulations! You are now a Digital Champion! 🎉","बधाई हो! आप अब डिजिटल चैंपियन हैं! 🎉","अभिनंदन! तुम्ही आता डिजिटल विजेते आहात! 🎉"],
+["🏅 Smartphone Starter","🏅 स्मार्टफोन शुरुआती","🏅 स्मार्टफोन सुरुवातकर्ता"],["🏅 Messaging Master","🏅 मैसेजिंग मास्टर","🏅 संदेश तज्ज्ञ"],
+["🏅 UPI Smart User","🏅 यूपीआई स्मार्ट उपयोगकर्ता","🏅 यूपीआय स्मार्ट वापरकर्ता"],["🏅 Internet Explorer","🏅 इंटरनेट खोजकर्ता","🏅 इंटरनेट अन्वेषक"],
+["🏅 Photo & Video Pro","🏅 फोटो और वीडियो प्रो","🏅 फोटो आणि व्हिडिओ तज्ज्ञ"],["🏅 Digital Safety Champion","🏅 डिजिटल सुरक्षा चैंपियन","🏅 डिजिटल सुरक्षा विजेता"],
+["Help & Support ❤️","सहायता ❤️","मदत आणि सहाय्य ❤️"],["🙋 I Need Help","🙋 मुझे मदद चाहिए","🙋 मला मदत हवी"],["🔁 Replay Tutorial","🔁 ट्यूटोरियल फिर देखें","🔁 ट्यूटोरियल पुन्हा पहा"],
+["For help, ask a family member to sit with you, or contact your local digital literacy center.","मदद के लिए परिवार के किसी सदस्य को साथ बैठाएँ या अपने स्थानीय डिजिटल साक्षरता केंद्र से संपर्क करें।","मदतीसाठी कुटुंबातील एखाद्याला सोबत बसवा किंवा स्थानिक डिजिटल साक्षरता केंद्राशी संपर्क साधा."],
+["Frequently Asked Questions","अक्सर पूछे जाने वाले प्रश्न","वारंवार विचारले जाणारे प्रश्न"],
+["My phone screen is too small to read. What do I do?","फोन की स्क्रीन पढ़ने में बहुत छोटी है। क्या करूँ?","फोनची स्क्रीन वाचायला खूप लहान आहे. काय करू?"],
+["Use the","ऊपर दिए गए","वर असलेले"],["button at the top of every page to make text bigger.","बटन से अक्षर बड़े करें (यह हर पेज पर है)।","बटण दाबून अक्षरे मोठी करा (प्रत्येक पानावर आहे)."],
+["I forgot my progress. Is it saved?","मेरी प्रगति का क्या हुआ? क्या वह सेव है?","माझी प्रगती सेव्ह आहे का?"],["Yes. Your progress is saved automatically on this device.","हाँ। आपकी प्रगति इस डिवाइस पर अपने-आप सेव होती है।","होय. तुमची प्रगती या डिव्हाइसवर आपोआप सेव्ह होते."],
+["Someone called asking for my OTP. What should I do?","किसी ने मेरा ओटीपी माँगा। मैं क्या करूँ?","कोणीतरी माझा ओटीपी मागितला. मी काय करू?"],["Never share it. Hang up and call your bank using the number on your card.","कभी साझा न करें। फोन काटें और कार्ड पर छपे नंबर से बैंक को कॉल करें।","कधीही सांगू नका. फोन कट करा आणि कार्डवरील नंबरवरून बँकेला कॉल करा."],
+["How do I change the language?","भाषा कैसे बदलूँ?","भाषा कशी बदलू?"],["Use the 🌐 language menu at the top of the page.","पेज के ऊपर 🌐 भाषा मेन्यू का उपयोग करें।","पानाच्या वरच्या 🌐 भाषा मेनूचा वापर करा."],
+["Common Smartphone Problems","स्मार्टफोन की आम समस्याएँ","स्मार्टफोनच्या सामान्य अडचणी"],
+["Phone is slow:","फोन धीमा है:","फोन हळू आहे:"],["Restart it by holding the power button.","पावर बटन दबाकर रखें और रीस्टार्ट करें।","पॉवर बटण दाबून धरा आणि रीस्टार्ट करा."],
+["Can't hear calls:","कॉल सुनाई नहीं देता:","कॉल ऐकू येत नाही:"],["Check the volume buttons on the side.","बगल के वॉल्यूम बटन जाँचें।","बाजूची व्हॉल्यूम बटणे तपासा."],
+["No internet:","इंटरनेट नहीं चल रहा:","इंटरनेट चालत नाही:"],["Check that Wi-Fi is turned on in Settings.","सेटिंग्स में वाई-फ़ाई चालू है या नहीं, देखें।","सेटिंग्जमध्ये वाय-फाय सुरू आहे का ते पहा."],
+["Screen too dim:","स्क्रीन बहुत धुंधली है:","स्क्रीन खूप अंधुक आहे:"],["Adjust brightness in Settings.","सेटिंग्स में ब्राइटनेस बढ़ाएँ।","सेटिंग्जमध्ये ब्राइटनेस वाढवा."],
+["Digital Dictionary","डिजिटल शब्दकोश","डिजिटल शब्दकोश"],
+["OTP","ओटीपी","ओटीपी"],["UPI","यूपीआई","यूपीआय"],["Wi-Fi","वाई-फ़ाई","वाय-फाय"],["QR Code","क्यूआर कोड","क्यूआर कोड"],["Browser","ब्राउज़र","ब्राउझर"],["Link","लिंक","लिंक"],
+["One-Time Password — a secret code sent to confirm it's really you.","वन-टाइम पासवर्ड — यह पक्का करने वाला गुप्त कोड कि आप ही हैं।","वन-टाइम पासवर्ड — तुम्हीच आहात हे पक्के करणारा गुप्त कोड."],
+["Unified Payments Interface — a way to send money using your phone.","यूनिफाइड पेमेंट्स इंटरफ़ेस — फोन से पैसे भेजने का तरीका।","युनिफाइड पेमेंट्स इंटरफेस — फोनवरून पैसे पाठवण्याची पद्धत."],
+["Wireless Internet Connection — lets your phone go online without mobile data.","वायरलेस इंटरनेट कनेक्शन — मोबाइल डेटा के बिना फोन को ऑनलाइन करता है।","वायरलेस इंटरनेट कनेक्शन — मोबाइल डेटाशिवाय फोन ऑनलाइन करते."],
+["A square code your phone camera can scan to open a link or make a payment.","एक चौकोर कोड जिसे फोन कैमरे से स्कैन करके लिंक खोला या भुगतान किया जा सकता है।","फोनच्या कॅमेऱ्याने स्कॅन करून लिंक उघडता किंवा पेमेंट करता येणारा चौकोनी कोड."],
+["An app used to visit websites, like Chrome.","वेबसाइट देखने का ऐप, जैसे क्रोम।","वेबसाइट पाहण्यासाठीचे अॅप, जसे क्रोम."],
+["A clickable address that opens another page — be careful with unknown links.","एक क्लिक होने वाला पता जो दूसरा पेज खोलता है — अनजान लिंक से सावधान रहें।","दुसरे पान उघडणारा क्लिक करण्याजोगा पत्ता — अनोळखी लिंकपासून सावध रहा."],
+["About","हमारे बारे में","आमच्याबद्दल"],["Help","सहायता","मदत"],["Privacy","गोपनीयता","गोपनीयता"],["Contact","संपर्क","संपर्क"],
+["Enter amount","राशि लिखें","रक्कम लिहा"],["Type a message...","संदेश लिखें...","संदेश लिहा..."],["Try typing a password","कोई पासवर्ड लिखकर देखें","पासवर्ड लिहून पहा"],["Type: weather today","लिखें: आज का मौसम","लिहा: आजचे हवामान"],
+["📞 Practice a Phone Call","📞 फोन कॉल का अभ्यास","📞 फोन कॉलचा सराव"],
+["Tap a family member to call them, or use the dial pad. (Practice only — no real call.)","परिवार के किसी सदस्य पर टैप करके कॉल करें, या डायल पैड इस्तेमाल करें। (केवल अभ्यास — असली कॉल नहीं।)","कुटुंबातील सदस्यावर टॅप करून कॉल करा किंवा डायल पॅड वापरा. (फक्त सराव — खरा कॉल नाही.)"],
+["👨‍👩‍👧 Family Contacts","👨‍👩‍👧 परिवार के संपर्क","👨‍👩‍👧 कुटुंबाचे संपर्क"],["🔢 Dial Pad","🔢 डायल पैड","🔢 डायल पॅड"],
+["Son","बेटा","मुलगा"],["Daughter","बेटी","मुलगी"],["Grandson","पोता","नातू"],["Granddaughter","पोती","नात"],["Brother","भाई","भाऊ"],["Sister","बहन","बहीण"],["Doctor","डॉक्टर","डॉक्टर"],["Neighbour","पड़ोसी","शेजारी"],["Practice Number","अभ्यास नंबर","सराव नंबर"],
+["Calling…","कॉल हो रहा है…","कॉल लागत आहे…"],["Connected","जुड़ गया","जोडला गेला"],
+["Mute","म्यूट","म्यूट"],["Speaker","स्पीकर","स्पीकर"],["Video","वीडियो","व्हिडिओ"],["📞 Call","📞 कॉल करें","📞 कॉल करा"],["📵 End Call","📵 कॉल समाप्त","📵 कॉल बंद करा"],
+["Practice call ended. Well done! 🎉","अभ्यास कॉल समाप्त। बहुत बढ़िया! 🎉","सराव कॉल संपला. छान केलेत! 🎉"],
+["📲 Install App","📲 ऐप इंस्टॉल करें","📲 अॅप इंस्टॉल करा"],["Phone","फ़ोन","फोन"],["Messages","संदेश","संदेश"],["Camera","कैमरा","कॅमेरा"],["UPI Pay","यूपीआई पे","यूपीआय पे"],["Security","सुरक्षा","सुरक्षा"],
+["Keypad","कीपैड","कीपॅड"],["Incoming call","आने वाली कॉल","येणारा कॉल"],["Proceed to pay","भुगतान के लिए आगे बढ़ें","पेमेंटसाठी पुढे जा"],
+["Payment Successful","भुगतान सफल","पेमेंट यशस्वी"],["Done","हो गया","झाले"],["Enter UPI PIN","यूपीआई पिन डालें","यूपीआय पिन टाका"],
+["Create password","पासवर्ड बनाएँ","पासवर्ड तयार करा"],["Too weak","बहुत कमज़ोर","खूप कमकुवत"],["Fair","ठीक-ठाक","ठीक"],["Good","अच्छा","चांगला"],["Strong 🎉","मज़बूत 🎉","मजबूत 🎉"],
+["⌄ Close","⌄ बंद करें","⌄ बंद करा"],["Scan QR","क्यूआर स्कैन","क्यूआर स्कॅन"],["Fake Message","नकली संदेश","बनावट संदेश"],["Suspicious Call","संदिग्ध कॉल","संशयास्पद कॉल"],["Password","पासवर्ड","पासवर्ड"],["Quiz","प्रश्नोत्तरी","प्रश्नमंजुषा"],
+["To make a call, open the Phone app and tap a contact, then tap the green call button.", "कॉल करने के लिए फोन ऐप खोलें, किसी संपर्क पर टैप करें, फिर हरे कॉल बटन को दबाएँ।", "कॉल करण्यासाठी फोन अॅप उघडा, संपर्कावर टॅप करा, मग हिरवे कॉल बटण दाबा."],
+["To save a contact, open Contacts, tap \"+\", type the name and number, then tap Save.", "संपर्क सेव करने के लिए Contacts खोलें, \"+\" दबाएँ, नाम और नंबर लिखें, फिर Save दबाएँ।", "संपर्क सेव्ह करण्यासाठी Contacts उघडा, \"+\" दाबा, नाव आणि नंबर लिहा, मग Save दाबा."],
+["To change volume, press the buttons on the side of your phone.", "आवाज़ बदलने के लिए फोन के बगल के बटन दबाएँ।", "आवाज बदलण्यासाठी फोनच्या बाजूची बटणे दाबा."],
+["To change text size, go to Settings → Display → Font Size and slide it larger.", "अक्षर बड़े करने के लिए Settings → Display → Font Size में जाएँ और स्लाइडर बढ़ाएँ।", "अक्षरे मोठी करण्यासाठी Settings → Display → Font Size मध्ये जा आणि स्लायडर वाढवा."],
+["To connect to Wi-Fi, go to Settings → Wi-Fi, turn it on, and tap your home network.", "वाई-फ़ाई जोड़ने के लिए Settings → Wi-Fi में जाएँ, उसे चालू करें और अपने घर के नेटवर्क पर टैप करें।", "वाय-फाय जोडण्यासाठी Settings → Wi-Fi मध्ये जा, ते सुरू करा आणि तुमच्या घरच्या नेटवर्कवर टॅप करा."],
+["Tap the green button below to practice making a call.", "कॉल का अभ्यास करने के लिए नीचे हरा बटन दबाएँ।", "कॉलचा सराव करण्यासाठी खालील हिरवे बटण दाबा."],
+["Open WhatsApp and tap a contact to start a chat.", "व्हाट्सऐप खोलें और चैट शुरू करने के लिए किसी संपर्क पर टैप करें।", "व्हॉट्सअॅप उघडा आणि चॅट सुरू करण्यासाठी संपर्कावर टॅप करा."],
+["Type your message in the box and tap the arrow to send.", "बॉक्स में संदेश लिखें और भेजने के लिए तीर दबाएँ।", "बॉक्समध्ये संदेश लिहा आणि पाठवण्यासाठी बाणावर टॅप करा."],
+["To send a photo, tap the paperclip (📎) icon and choose a picture.", "फोटो भेजने के लिए पेपरक्लिप (📎) आइकन दबाएँ और तस्वीर चुनें।", "फोटो पाठवण्यासाठी पेपरक्लिप (📎) आयकॉन दाबा आणि चित्र निवडा."],
+["To send a voice message, press and hold the microphone icon and speak.", "वॉइस संदेश भेजने के लिए माइक्रोफोन आइकन दबाकर रखें और बोलें।", "व्हॉइस संदेश पाठवण्यासाठी मायक्रोफोन आयकॉन दाबून धरा आणि बोला."],
+["To make a video call, tap the camera icon at the top of a chat.", "वीडियो कॉल करने के लिए चैट के ऊपर कैमरा आइकन दबाएँ।", "व्हिडिओ कॉल करण्यासाठी चॅटच्या वरचा कॅमेरा आयकॉन दाबा."],
+["Be careful of messages asking for money or OTP — these are often scams.", "पैसे या ओटीपी माँगने वाले संदेशों से सावधान रहें — ये अक्सर ठगी होते हैं।", "पैसे किंवा ओटीपी मागणाऱ्या संदेशांपासून सावध रहा — हे बहुतेक फसवणूक असते."],
+["Try the simulated chat below.", "नीचे दी गई नकली चैट आज़माएँ।", "खालील सराव चॅट करून पहा."],
+["UPI lets you send money instantly using your phone.", "यूपीआई से आप फोन से तुरंत पैसे भेज सकते हैं।", "यूपीआयमुळे तुम्ही फोनवरून लगेच पैसे पाठवू शकता."],
+["To scan a QR code, open your UPI app and tap \"Scan QR\".", "क्यूआर कोड स्कैन करने के लिए अपना यूपीआई ऐप खोलें और \"Scan QR\" दबाएँ।", "क्यूआर कोड स्कॅन करण्यासाठी तुमचे यूपीआय अॅप उघडा आणि \"Scan QR\" दाबा."],
+["Always check the receiver's name on screen before confirming payment.", "भुगतान पक्का करने से पहले स्क्रीन पर पाने वाले का नाम हमेशा जाँचें।", "पेमेंट निश्चित करण्यापूर्वी स्क्रीनवर घेणाऱ्याचे नाव नेहमी तपासा."],
+["To send money, enter the amount and tap Pay.", "पैसे भेजने के लिए राशि लिखें और Pay दबाएँ।", "पैसे पाठवण्यासाठी रक्कम लिहा आणि Pay दाबा."],
+["To check a payment, open \"Transaction History\" in your UPI app.", "भुगतान जाँचने के लिए यूपीआई ऐप में \"Transaction History\" खोलें।", "पेमेंट तपासण्यासाठी यूपीआय अॅपमध्ये \"Transaction History\" उघडा."],
+["Try the fake payment simulator below. No real money is used.", "नीचे नकली भुगतान अभ्यास आज़माएँ। कोई असली पैसा इस्तेमाल नहीं होता।", "खालील सराव पेमेंट करून पहा. खरे पैसे वापरले जात नाहीत."],
+["A browser (like Chrome) is used to visit websites.", "ब्राउज़र (जैसे क्रोम) से वेबसाइट देखी जाती हैं।", "ब्राउझर (जसे क्रोम) वापरून वेबसाइट पाहिल्या जातात."],
+["To search, open Google and type what you want to know.", "खोजने के लिए गूगल खोलें और जो जानना है वह लिखें।", "शोधण्यासाठी गूगल उघडा आणि तुम्हाला जे जाणून घ्यायचे ते लिहा."],
+["To use voice search, tap the microphone icon and speak your question.", "आवाज़ से खोजने के लिए माइक्रोफोन आइकन दबाएँ और अपना सवाल बोलें।", "आवाजाने शोधण्यासाठी मायक्रोफोन आयकॉन दाबा आणि तुमचा प्रश्न बोला."],
+["Look for \"https://\" and a lock icon to know a site is safer.", "साइट सुरक्षित है, यह जानने के लिए \"https://\" और ताले का आइकन देखें।", "साइट सुरक्षित आहे हे ओळखण्यासाठी \"https://\" आणि कुलपाचा आयकॉन पहा."],
+["Be cautious of sites asking for your bank details or passwords.", "बैंक की जानकारी या पासवर्ड माँगने वाली साइटों से सावधान रहें।", "बँकेची माहिती किंवा पासवर्ड मागणाऱ्या साइटपासून सावध रहा."],
+["Try the simulated search below.", "नीचे दी गई नकली खोज आज़माएँ।", "खालील सराव शोध करून पहा."],
+["To take a photo, open the Camera app and tap the round button.", "फोटो लेने के लिए कैमरा ऐप खोलें और गोल बटन दबाएँ।", "फोटो काढण्यासाठी कॅमेरा अॅप उघडा आणि गोल बटण दाबा."],
+["To view photos, open the Gallery or Photos app.", "फोटो देखने के लिए गैलरी या फोटोज़ ऐप खोलें।", "फोटो पाहण्यासाठी गॅलरी किंवा फोटोज अॅप उघडा."],
+["To share a photo, open it and tap the Share icon.", "फोटो भेजने के लिए उसे खोलें और शेयर आइकन दबाएँ।", "फोटो शेअर करण्यासाठी तो उघडा आणि शेअर आयकॉन दाबा."],
+["To delete a photo, open it, tap the trash icon, then confirm.", "फोटो हटाने के लिए उसे खोलें, कूड़ेदान का आइकन दबाएँ, फिर पुष्टि करें।", "फोटो हटवण्यासाठी तो उघडा, कचरापेटीचा आयकॉन दाबा, मग खात्री करा."],
+["To make a video call on Google Meet, tap \"New Meeting\" and share the link with family.", "गूगल मीट पर वीडियो कॉल के लिए \"New Meeting\" दबाएँ और लिंक परिवार को भेजें।", "गूगल मीटवर व्हिडिओ कॉलसाठी \"New Meeting\" दाबा आणि लिंक कुटुंबाला पाठवा."],
+["Follow the visual steps above to practice on your own phone.", "अपने फोन पर अभ्यास करने के लिए ऊपर दिए कदमों का पालन करें।", "स्वतःच्या फोनवर सराव करण्यासाठी वरील पायऱ्या फॉलो करा."],
+["OTP means One-Time Password — never share it, even with \"bank staff\".", "ओटीपी यानी वन-टाइम पासवर्ड — इसे कभी साझा न करें, \"बैंक कर्मचारी\" को भी नहीं।", "ओटीपी म्हणजे वन-टाइम पासवर्ड — तो कधीही सांगू नका, \"बँक कर्मचाऱ्यालाही\" नाही."],
+["Use a strong password: mix letters, numbers, and avoid your birthday.", "मज़बूत पासवर्ड रखें: अक्षर और अंक मिलाएँ, जन्मतिथि न रखें।", "मजबूत पासवर्ड ठेवा: अक्षरे आणि अंक मिसळा, जन्मतारीख टाळा."],
+["Banks and government offices never call asking for your OTP or PIN.", "बैंक और सरकारी दफ़्तर कभी फोन करके ओटीपी या पिन नहीं माँगते।", "बँका आणि सरकारी कार्यालये कधीही फोन करून ओटीपी किंवा पिन मागत नाहीत."],
+["Do not click links from unknown numbers.", "अनजान नंबरों से आए लिंक पर क्लिक न करें।", "अनोळखी नंबरवरून आलेल्या लिंकवर क्लिक करू नका."],
+["To block a caller, open Phone → recent call → tap the number → Block.", "कॉलर को ब्लॉक करने के लिए Phone → हाल की कॉल → नंबर दबाएँ → Block।", "कॉलरला ब्लॉक करण्यासाठी Phone → अलीकडील कॉल → नंबर दाबा → Block."],
+["To report a scam, contact your bank or call the national Cyber Crime helpline 1930.", "ठगी की रिपोर्ट के लिए अपने बैंक से संपर्क करें या राष्ट्रीय साइबर क्राइम हेल्पलाइन 1930 पर कॉल करें।", "फसवणुकीची तक्रार करण्यासाठी तुमच्या बँकेशी संपर्क साधा किंवा राष्ट्रीय सायबर क्राइम हेल्पलाइन 1930 वर कॉल करा."],
+["Mom: \"Can you send me a photo of the flowers?\"", "मम्मी: \"क्या तुम मुझे फूलों की फोटो भेज सकते हो?\"", "आई: \"तू मला फुलांचा फोटो पाठवशील का?\""],
+["✓ Photo sent! Mom: \"Beautiful, thank you!\"", "✓ फोटो भेज दिया! मम्मी: \"बहुत सुंदर, धन्यवाद!\"", "✓ फोटो पाठवला! आई: \"खूप सुंदर, धन्यवाद!\""],
+["Pay to:", "इन्हें भुगतान:", "यांना पेमेंट:"],
+["📞 Calling... Connected! (This is a practice call, no one was really called.)", "📞 कॉल हो रहा है... जुड़ गया! (यह अभ्यास कॉल है, किसी को असली कॉल नहीं गया।)", "📞 कॉल लागत आहे... जोडला गेला! (हा सराव कॉल आहे, कोणालाही खरा कॉल गेला नाही.)"],
+["True", "सही", "बरोबर"],
+["False", "गलत", "चूक"],
+["Which button changes the phone volume?", "फोन की आवाज़ कौन-सा बटन बदलता है?", "फोनचा आवाज कोणते बटण बदलते?"],
+["The buttons on the side of the phone", "फोन के बगल के बटन", "फोनच्या बाजूची बटणे"],
+["The camera icon", "कैमरा आइकन", "कॅमेरा आयकॉन"],
+["True or False: You need Wi-Fi to make a phone call.", "सही या गलत: फोन कॉल करने के लिए वाई-फ़ाई चाहिए।", "बरोबर की चूक: फोन कॉल करण्यासाठी वाय-फाय लागते."],
+["Where do you go to make text bigger?", "अक्षर बड़े करने के लिए कहाँ जाते हैं?", "अक्षरे मोठी करण्यासाठी कुठे जायचे?"],
+["Settings → Display → Font Size", "सेटिंग्स → डिस्प्ले → फ़ॉन्ट साइज़", "सेटिंग्ज → डिस्प्ले → फॉन्ट साइज"],
+["The Camera app", "कैमरा ऐप", "कॅमेरा अॅप"],
+["Which icon do you tap to send a photo in WhatsApp?", "व्हाट्सऐप में फोटो भेजने के लिए कौन-सा आइकन दबाते हैं?", "व्हॉट्सअॅपमध्ये फोटो पाठवण्यासाठी कोणता आयकॉन दाबता?"],
+["The paperclip 📎", "पेपरक्लिप 📎", "पेपरक्लिप 📎"],
+["The trash can", "कूड़ेदान", "कचरापेटी"],
+["True or False: You should reply with money if a message asks urgently.", "सही या गलत: कोई संदेश जल्दी में पैसे माँगे तो पैसे भेज देने चाहिए।", "बरोबर की चूक: संदेशात तातडीने पैसे मागितले तर पैसे पाठवावेत."],
+["How do you send a voice message?", "वॉइस संदेश कैसे भेजते हैं?", "व्हॉइस संदेश कसा पाठवता?"],
+["Press and hold the microphone icon", "माइक्रोफोन आइकन दबाकर रखें", "मायक्रोफोन आयकॉन दाबून धरा"],
+["Shake the phone", "फोन को हिलाएँ", "फोन हलवा"],
+["What should you check before paying with UPI?", "यूपीआई से भुगतान से पहले क्या जाँचना चाहिए?", "यूपीआयने पेमेंट करण्यापूर्वी काय तपासावे?"],
+["The receiver's name on screen", "स्क्रीन पर पाने वाले का नाम", "स्क्रीनवर घेणाऱ्याचे नाव"],
+["The phone's battery percentage", "फोन की बैटरी का प्रतिशत", "फोनची बॅटरी टक्केवारी"],
+["True or False: It is safe to share your UPI PIN with a bank \"employee\" who calls you.", "सही या गलत: फोन करने वाले \"बैंक कर्मचारी\" को अपना यूपीआई पिन बताना सुरक्षित है।", "बरोबर की चूक: फोन करणाऱ्या \"बँक कर्मचाऱ्याला\" तुमचा यूपीआय पिन सांगणे सुरक्षित आहे."],
+["How do you check if a payment succeeded?", "भुगतान सफल हुआ या नहीं, कैसे जाँचें?", "पेमेंट यशस्वी झाले की नाही कसे तपासावे?"],
+["Look in Transaction History", "Transaction History में देखें", "Transaction History मध्ये पहा"],
+["Restart the phone", "फोन रीस्टार्ट करें", "फोन रीस्टार्ट करा"],
+["What symbol shows a website may be safer?", "कौन-सा चिह्न बताता है कि वेबसाइट ज़्यादा सुरक्षित हो सकती है?", "कोणते चिन्ह दाखवते की वेबसाइट अधिक सुरक्षित असू शकते?"],
+["A lock icon and \"https://\"", "ताले का आइकन और \"https://\"", "कुलपाचा आयकॉन आणि \"https://\""],
+["A red circle", "लाल गोला", "लाल गोल"],
+["True or False: You can search Google using your voice.", "सही या गलत: आप गूगल पर आवाज़ से खोज सकते हैं।", "बरोबर की चूक: तुम्ही गूगलवर आवाजाने शोधू शकता."],
+["What should you avoid clicking?", "किस पर क्लिक करने से बचना चाहिए?", "कशावर क्लिक करणे टाळावे?"],
+["Unknown links from strangers", "अनजान लोगों के भेजे अनजान लिंक", "अनोळखी लोकांनी पाठवलेल्या अनोळखी लिंक"],
+["The Google search bar", "गूगल सर्च बार", "गूगल सर्च बार"],
+["Which app do you use to take a photo?", "फोटो लेने के लिए कौन-सा ऐप इस्तेमाल करते हैं?", "फोटो काढण्यासाठी कोणते अॅप वापरता?"],
+["Camera app", "कैमरा ऐप", "कॅमेरा अॅप"],
+["Calculator app", "कैलकुलेटर ऐप", "कॅल्क्युलेटर अॅप"],
+["True or False: Deleted photos ask for confirmation first.", "सही या गलत: फोटो हटाने से पहले पुष्टि पूछी जाती है।", "बरोबर की चूक: फोटो हटवण्यापूर्वी खात्री विचारली जाते."],
+["What do you tap to share a photo?", "फोटो भेजने के लिए क्या दबाते हैं?", "फोटो शेअर करण्यासाठी काय दाबता?"],
+["The Share icon", "शेयर आइकन", "शेअर आयकॉन"],
+["The Home button", "होम बटन", "होम बटण"],
+["What does OTP stand for?", "ओटीपी का पूरा नाम क्या है?", "ओटीपीचे पूर्ण रूप काय?"],
+["One-Time Password", "वन-टाइम पासवर्ड", "वन-टाइम पासवर्ड"],
+["Online Transfer Payment", "ऑनलाइन ट्रांसफर पेमेंट", "ऑनलाइन ट्रान्सफर पेमेंट"],
+["True or False: Banks call asking for your OTP.", "सही या गलत: बैंक फोन करके आपका ओटीपी माँगते हैं।", "बरोबर की चूक: बँका फोन करून तुमचा ओटीपी मागतात."],
+["What should a strong password include?", "मज़बूत पासवर्ड में क्या होना चाहिए?", "मजबूत पासवर्डमध्ये काय असावे?"],
+["A mix of letters and numbers, not your birthday", "अक्षर और अंकों का मेल, जन्मतिथि नहीं", "अक्षरे आणि अंकांचे मिश्रण, जन्मतारीख नाही"],
+["Just your name", "सिर्फ़ आपका नाम", "फक्त तुमचे नाव"],
+["This is your practice phone. Tap an app to open it.", "यह आपका अभ्यास फोन है। ऐप खोलने के लिए उस पर टैप करें।", "हा तुमचा सराव फोन आहे. अॅप उघडण्यासाठी त्यावर टॅप करा."],
+["Tap a family member to call them, or tap the round keypad button.", "कॉल करने के लिए परिवार के सदस्य पर टैप करें, या गोल कीपैड बटन दबाएँ।", "कॉल करण्यासाठी कुटुंबातील सदस्यावर टॅप करा किंवा गोल कीपॅड बटण दाबा."],
+["Tap the numbers, then the green call button.", "नंबर दबाएँ, फिर हरा कॉल बटन।", "नंबर दाबा, मग हिरवे कॉल बटण."],
+["Type a number first.", "पहले कोई नंबर लिखें।", "आधी एखादा नंबर लिहा."],
+["Calling… tap the big red button to end the call.", "कॉल हो रहा है… कॉल खत्म करने के लिए बड़ा लाल बटन दबाएँ।", "कॉल लागत आहे… कॉल संपवण्यासाठी मोठे लाल बटण दाबा."],
+["Call ended. Well done! 🎉", "कॉल समाप्त। शाबाश! 🎉", "कॉल संपला. छान! 🎉"],
+["Connected! You can talk now. Tap the red button when finished.", "जुड़ गया! अब आप बात कर सकते हैं। बात पूरी होने पर लाल बटन दबाएँ।", "जोडला गेला! आता बोला. झाल्यावर लाल बटण दाबा."],
+["Type a message and tap the blue send arrow. Tap the paper-clip to send a photo.", "संदेश लिखें और नीला भेजें तीर दबाएँ। फोटो भेजने के लिए पेपर-क्लिप दबाएँ।", "संदेश लिहा आणि निळा पाठवा बाण दाबा. फोटो पाठवण्यासाठी पेपर-क्लिप दाबा."],
+["Message sent! (Practice only — nobody received it.) ✓", "संदेश भेज दिया! (सिर्फ़ अभ्यास — किसी को नहीं मिला।) ✓", "संदेश पाठवला! (फक्त सराव — कोणालाही मिळाला नाही.) ✓"],
+["Type something first.", "पहले कुछ लिखें।", "आधी काहीतरी लिहा."],
+["Read this message carefully. What would you do?", "यह संदेश ध्यान से पढ़ें। आप क्या करेंगे?", "हा संदेश काळजीपूर्वक वाचा. तुम्ही काय कराल?"],
+["Correct! 🎉 Prize messages with links are scams. Never click them.", "सही! 🎉 लिंक वाले इनाम के संदेश ठगी होते हैं। उन पर कभी क्लिक न करें।", "बरोबर! 🎉 लिंकसह बक्षिसाचे संदेश फसवणूक असतात. त्यावर कधीही क्लिक करू नका."],
+["Try Again 😊 Do not click unknown links — they can steal your money.", "फिर कोशिश करें 😊 अनजान लिंक पर क्लिक न करें — इनसे आपके पैसे चोरी हो सकते हैं।", "पुन्हा प्रयत्न करा 😊 अनोळखी लिंकवर क्लिक करू नका — त्यामुळे तुमचे पैसे चोरीला जाऊ शकतात."],
+["Your phone is ringing. An unknown number is calling.", "आपका फोन बज रहा है। कोई अनजान नंबर कॉल कर रहा है।", "तुमचा फोन वाजत आहे. अनोळखी नंबर कॉल करत आहे."],
+["Good! It is safe to decline unknown numbers. 🎉", "बढ़िया! अनजान नंबर की कॉल काटना सुरक्षित है। 🎉", "छान! अनोळखी नंबरचा कॉल नाकारणे सुरक्षित आहे. 🎉"],
+["The caller wants your OTP. What do you do?", "कॉल करने वाला आपका ओटीपी माँग रहा है। आप क्या करेंगे?", "कॉल करणारा तुमचा ओटीपी मागत आहे. तुम्ही काय कराल?"],
+["Correct! 🎉 Banks never ask for your OTP. Hang up and call the number on your bank card.", "सही! 🎉 बैंक कभी ओटीपी नहीं माँगते। फोन काटें और बैंक कार्ड पर छपे नंबर पर कॉल करें।", "बरोबर! 🎉 बँका कधीही ओटीपी मागत नाहीत. फोन कट करा आणि बँक कार्डवरील नंबरवर कॉल करा."],
+["Try Again 😊 Never share your OTP — even if the caller says they are from your bank.", "फिर कोशिश करें 😊 अपना ओटीपी कभी साझा न करें — भले ही कॉल करने वाला बैंक का बताए।", "पुन्हा प्रयत्न करा 😊 तुमचा ओटीपी कधीही सांगू नका — कॉल करणारा बँकेचा असल्याचे सांगत असला तरी."],
+["Point the camera at the code, then tap the big white round button.", "कैमरा कोड की ओर करें, फिर बड़ा सफ़ेद गोल बटन दबाएँ।", "कॅमेरा कोडकडे धरा, मग मोठे पांढरे गोल बटण दाबा."],
+["Code scanned! Check that the name is right before you pay.", "कोड स्कैन हो गया! भुगतान से पहले जाँचें कि नाम सही है।", "कोड स्कॅन झाला! पेमेंटपूर्वी नाव बरोबर आहे का ते तपासा."],
+["Check the receiver's name is correct. Then type an amount.", "जाँचें कि पाने वाले का नाम सही है। फिर राशि लिखें।", "घेणाऱ्याचे नाव बरोबर आहे का ते तपासा. मग रक्कम लिहा."],
+["Please type an amount first.", "पहले राशि लिखें।", "आधी रक्कम लिहा."],
+["Type any 4 numbers as a practice PIN. In real life, never tell your PIN to anyone.", "अभ्यास पिन के रूप में कोई भी 4 अंक लिखें। असली जीवन में अपना पिन किसी को न बताएँ।", "सराव पिन म्हणून कोणतेही 4 अंक लिहा. खऱ्या आयुष्यात तुमचा पिन कोणालाही सांगू नका."],
+["Well done! You finished a practice payment. 🎉", "शाबाश! आपने अभ्यास भुगतान पूरा किया। 🎉", "छान! तुम्ही सराव पेमेंट पूर्ण केले. 🎉"],
+["Type a new password. Do not type your real password here. Make all four ticks turn green.", "नया पासवर्ड लिखें। यहाँ अपना असली पासवर्ड न लिखें। चारों निशान हरे करें।", "नवीन पासवर्ड लिहा. येथे तुमचा खरा पासवर्ड लिहू नका. चारही खुणा हिरव्या करा."],
+["Excellent! That is a strong password. 🎉", "बहुत बढ़िया! यह मज़बूत पासवर्ड है। 🎉", "उत्तम! हा मजबूत पासवर्ड आहे. 🎉"],
+["Practice number", "अभ्यास नंबर", "सराव नंबर"],
+["Unknown number · Maybe spam", "अनजान नंबर · शायद स्पैम", "अनोळखी नंबर · कदाचित स्पॅम"],
+["Namaste! How are you?", "नमस्ते! आप कैसे हैं?", "नमस्कार! तुम्ही कसे आहात?"],
+["Thank you! ❤️", "धन्यवाद! ❤️", "धन्यवाद! ❤️"],
+["📷 Photo", "📷 फोटो", "📷 फोटो"],
+["Text message", "संदेश लिखें", "संदेश लिहा"],
+["Congratulations! You won ₹50,000. Click this link now to claim:", "बधाई हो! आपने ₹50,000 जीते। इनाम पाने के लिए अभी इस लिंक पर क्लिक करें:", "अभिनंदन! तुम्ही ₹50,000 जिंकले. बक्षीस मिळवण्यासाठी आत्ताच या लिंकवर क्लिक करा:"],
+["Open the link", "लिंक खोलें", "लिंक उघडा"],
+["Delete, block & report spam", "मिटाएँ, ब्लॉक करें और स्पैम रिपोर्ट करें", "डिलीट करा, ब्लॉक करा आणि स्पॅम म्हणून कळवा"],
+["“I am calling from your bank. Your account will be blocked. Tell me the OTP you just received.”", "“मैं आपके बैंक से बोल रहा हूँ। आपका खाता बंद कर दिया जाएगा। आपको अभी जो ओटीपी मिला है वह बताइए।”", "“मी तुमच्या बँकेतून बोलतोय. तुमचे खाते बंद केले जाईल. तुम्हाला आत्ता आलेला ओटीपी सांगा.”"],
+["Tell them the OTP", "उन्हें ओटीपी बता दें", "त्यांना ओटीपी सांगा"],
+["Hang up and call the bank's official number", "फोन काटें और बैंक के आधिकारिक नंबर पर कॉल करें", "फोन कट करा आणि बँकेच्या अधिकृत नंबरवर कॉल करा"],
+["Point at a QR code", "क्यूआर कोड की ओर कैमरा करें", "क्यूआर कोडकडे कॅमेरा धरा"],
+["Practice only — no real money.", "केवल अभ्यास — असली पैसा नहीं।", "फक्त सराव — खरे पैसे नाहीत."],
+["Never share your UPI PIN or OTP with anyone.", "अपना यूपीआई पिन या ओटीपी किसी को न बताएँ।", "तुमचा यूपीआय पिन किंवा ओटीपी कोणालाही सांगू नका."],
+["Practice only — no real money was sent.", "केवल अभ्यास — कोई असली पैसा नहीं भेजा गया।", "फक्त सराव — खरे पैसे पाठवले गेले नाहीत."],
+["New password", "नया पासवर्ड", "नवीन पासवर्ड"],
+["At least 8 characters", "कम से कम 8 अक्षर", "किमान 8 अक्षरे"],
+["A number (0-9)", "एक अंक (0-9)", "एक अंक (0-9)"],
+["A capital letter (A-Z)", "एक बड़ा अक्षर (A-Z)", "एक मोठे अक्षर (A-Z)"],
+["A symbol (@ # ! $)", "एक चिह्न (@ # ! $)", "एक चिन्ह (@ # ! $)"],
+["To make a call, open the Phone app and tap a contact, then tap the green call button.","कॉल करने के लिए, फ़ोन ऐप खोलें, किसी संपर्क पर टैप करें, फिर हरे कॉल बटन पर टैप करें।","कॉल करण्यासाठी, फोन अ‍ॅप उघडा, एखाद्या संपर्कावर टॅप करा, नंतर हिरव्या कॉल बटणावर टॅप करा."],
+["To save a contact, open Contacts, tap \"+\", type the name and number, then tap Save.","संपर्क सेव करने के लिए, Contacts खोलें, \"+\" पर टैप करें, नाम और नंबर लिखें, फिर Save पर टैप करें।","संपर्क सेव्ह करण्यासाठी, Contacts उघडा, \"+\" वर टॅप करा, नाव आणि नंबर लिहा, नंतर Save वर टॅप करा."],
+["To change volume, press the buttons on the side of your phone.","आवाज़ बदलने के लिए, फोन के किनारे के बटन दबाएँ।","आवाज बदलण्यासाठी, फोनच्या बाजूची बटणे दाबा."],
+["To change text size, go to Settings → Display → Font Size and slide it larger.","अक्षरों का आकार बदलने के लिए, Settings → Display → Font Size में जाएँ और उसे बड़ा करें।","अक्षरांचा आकार बदलण्यासाठी, Settings → Display → Font Size मध्ये जा आणि तो मोठा करा."],
+["To connect to Wi-Fi, go to Settings → Wi-Fi, turn it on, and tap your home network.","वाई-फ़ाई से जुड़ने के लिए, Settings → Wi-Fi में जाएँ, उसे चालू करें, और अपने घर के नेटवर्क पर टैप करें।","वाय-फायशी जोडण्यासाठी, Settings → Wi-Fi मध्ये जा, ते सुरू करा, आणि तुमच्या घरच्या नेटवर्कवर टॅप करा."],
+["Tap the green button below to practice making a call.","कॉल करने का अभ्यास करने के लिए नीचे दिए हरे बटन पर टैप करें।","कॉल करण्याचा सराव करण्यासाठी खालील हिरव्या बटणावर टॅप करा."],
+["Open WhatsApp and tap a contact to start a chat.","व्हाट्सऐप खोलें और चैट शुरू करने के लिए किसी संपर्क पर टैप करें।","व्हॉट्सअ‍ॅप उघडा आणि चॅट सुरू करण्यासाठी एखाद्या संपर्कावर टॅप करा."],
+["Type your message in the box and tap the arrow to send.","बॉक्स में अपना संदेश लिखें और भेजने के लिए तीर पर टैप करें।","बॉक्समध्ये तुमचा संदेश लिहा आणि पाठवण्यासाठी बाणावर टॅप करा."],
+["To send a photo, tap the paperclip (📎) icon and choose a picture.","फोटो भेजने के लिए, पेपरक्लिप (📎) आइकन पर टैप करें और तस्वीर चुनें।","फोटो पाठवण्यासाठी, पेपरक्लिप (📎) आयकॉनवर टॅप करा आणि चित्र निवडा."],
+["To send a voice message, press and hold the microphone icon and speak.","वॉइस संदेश भेजने के लिए, माइक्रोफ़ोन आइकन को दबाकर रखें और बोलें।","व्हॉइस संदेश पाठवण्यासाठी, मायक्रोफोन आयकॉन दाबून धरा आणि बोला."],
+["To make a video call, tap the camera icon at the top of a chat.","वीडियो कॉल करने के लिए, चैट के ऊपर कैमरा आइकन पर टैप करें।","व्हिडिओ कॉल करण्यासाठी, चॅटच्या वरच्या कॅमेरा आयकॉनवर टॅप करा."],
+["Be careful of messages asking for money or OTP — these are often scams.","पैसे या ओटीपी माँगने वाले संदेशों से सावधान रहें — ये अक्सर ठगी होते हैं।","पैसे किंवा ओटीपी मागणाऱ्या संदेशांपासून सावध रहा — हे बरेचदा फसवणूक असते."],
+["Try the simulated chat below.","नीचे दी गई नकली चैट आज़माएँ।","खालील सराव चॅट करून पहा."],
+["Photo sent! Mom: \"Beautiful, thank you!\"","फोटो भेजा गया! मम्मी: \"बहुत सुंदर, धन्यवाद!\"","फोटो पाठवला! आई: \"खूप सुंदर, धन्यवाद!\""],
+["UPI lets you send money instantly using your phone.","यूपीआई से आप अपने फोन से तुरंत पैसे भेज सकते हैं।","यूपीआयमुळे तुम्ही तुमच्या फोनवरून लगेच पैसे पाठवू शकता."],
+["To scan a QR code, open your UPI app and tap \"Scan QR\".","क्यूआर कोड स्कैन करने के लिए, अपना यूपीआई ऐप खोलें और \"Scan QR\" पर टैप करें।","क्यूआर कोड स्कॅन करण्यासाठी, तुमचे यूपीआय अ‍ॅप उघडा आणि \"Scan QR\" वर टॅप करा."],
+["Always check the receiver's name on screen before confirming payment.","भुगतान की पुष्टि करने से पहले हमेशा स्क्रीन पर प्राप्तकर्ता का नाम जाँचें।","पेमेंट पक्के करण्यापूर्वी नेहमी स्क्रीनवरील प्राप्तकर्त्याचे नाव तपासा."],
+["To send money, enter the amount and tap Pay.","पैसे भेजने के लिए, राशि डालें और Pay पर टैप करें।","पैसे पाठवण्यासाठी, रक्कम टाका आणि Pay वर टॅप करा."],
+["To check a payment, open \"Transaction History\" in your UPI app.","भुगतान जाँचने के लिए, अपने यूपीआई ऐप में \"Transaction History\" खोलें।","पेमेंट तपासण्यासाठी, तुमच्या यूपीआय अ‍ॅपमध्ये \"Transaction History\" उघडा."],
+["⚠️ Never share your UPI PIN or OTP with anyone — not even your bank.","⚠️ अपना यूपीआई पिन या ओटीपी किसी के साथ साझा न करें — बैंक के साथ भी नहीं।","⚠️ तुमचा यूपीआय पिन किंवा ओटीपी कोणालाही सांगू नका — बँकेलाही नाही."],
+["Try the fake payment simulator below. No real money is used.","नीचे दिया नकली भुगतान सिम्युलेटर आज़माएँ। कोई असली पैसा उपयोग नहीं होता।","खालील सराव पेमेंट वापरून पहा. कोणतेही खरे पैसे वापरले जात नाहीत."],
+["A browser (like Chrome) is used to visit websites.","वेबसाइट देखने के लिए ब्राउज़र (जैसे Chrome) का उपयोग होता है।","वेबसाइट पाहण्यासाठी ब्राउझर (जसे Chrome) वापरला जातो."],
+["To search, open Google and type what you want to know.","खोजने के लिए, Google खोलें और जो जानना है वह लिखें।","शोधण्यासाठी, Google उघडा आणि तुम्हाला काय जाणून घ्यायचे आहे ते लिहा."],
+["To use voice search, tap the microphone icon and speak your question.","वॉइस सर्च का उपयोग करने के लिए, माइक्रोफ़ोन आइकन पर टैप करें और अपना सवाल बोलें।","व्हॉइस सर्च वापरण्यासाठी, मायक्रोफोन आयकॉनवर टॅप करा आणि तुमचा प्रश्न बोला."],
+["Look for \"https://\" and a lock icon to know a site is safer.","साइट सुरक्षित है यह जानने के लिए \"https://\" और लॉक आइकन देखें।","साइट सुरक्षित आहे हे जाणून घेण्यासाठी \"https://\" आणि लॉक आयकॉन पहा."],
+["Be cautious of sites asking for your bank details or passwords.","बैंक विवरण या पासवर्ड माँगने वाली साइटों से सावधान रहें।","बँक तपशील किंवा पासवर्ड मागणाऱ्या साइट्सपासून सावध रहा."],
+["Try the simulated search below.","नीचे दी गई नकली खोज आज़माएँ।","खालील सराव शोध करून पहा."],
+["To take a photo, open the Camera app and tap the round button.","फोटो लेने के लिए, कैमरा ऐप खोलें और गोल बटन पर टैप करें।","फोटो काढण्यासाठी, कॅमेरा अ‍ॅप उघडा आणि गोल बटणावर टॅप करा."],
+["To view photos, open the Gallery or Photos app.","फोटो देखने के लिए, Gallery या Photos ऐप खोलें।","फोटो पाहण्यासाठी, Gallery किंवा Photos अ‍ॅप उघडा."],
+["To share a photo, open it and tap the Share icon.","फोटो शेयर करने के लिए, उसे खोलें और Share आइकन पर टैप करें।","फोटो शेअर करण्यासाठी, तो उघडा आणि Share आयकॉनवर टॅप करा."],
+["To delete a photo, open it, tap the trash icon, then confirm.","फोटो हटाने के लिए, उसे खोलें, ट्रैश आइकन पर टैप करें, फिर पुष्टि करें।","फोटो हटवण्यासाठी, तो उघडा, ट्रॅश आयकॉनवर टॅप करा, नंतर पुष्टी करा."],
+["To make a video call on Google Meet, tap \"New Meeting\" and share the link with family.","Google Meet पर वीडियो कॉल करने के लिए, \"New Meeting\" पर टैप करें और लिंक परिवार को भेजें।","Google Meet वर व्हिडिओ कॉल करण्यासाठी, \"New Meeting\" वर टॅप करा आणि लिंक कुटुंबाला पाठवा."],
+["Follow the visual steps above to practice on your own phone.","अपने फोन पर अभ्यास करने के लिए ऊपर दिए गए चित्रों वाले चरण देखें।","तुमच्या फोनवर सराव करण्यासाठी वरील चित्रांसह दिलेल्या पायऱ्या पहा."],
+["OTP means One-Time Password — never share it, even with \"bank staff\".","ओटीपी का मतलब वन-टाइम पासवर्ड है — इसे कभी साझा न करें, चाहे \"बैंक कर्मचारी\" ही क्यों न कहे।","ओटीपी म्हणजे वन-टाइम पासवर्ड — तो कधीही सांगू नका, \"बँक कर्मचारी\" असल्याचे सांगितले तरीही."],
+["Use a strong password: mix letters, numbers, and avoid your birthday.","मज़बूत पासवर्ड बनाएँ: अक्षर और नंबर मिलाएँ, और अपनी जन्मतिथि का उपयोग न करें।","मजबूत पासवर्ड वापरा: अक्षरे आणि आकडे मिसळा, आणि तुमची जन्मतारीख वापरू नका."],
+["Banks and government offices never call asking for your OTP or PIN.","बैंक और सरकारी दफ्तर कभी फोन करके ओटीपी या पिन नहीं माँगते।","बँका आणि सरकारी कार्यालये कधीही फोन करून ओटीपी किंवा पिन मागत नाहीत."],
+["Do not click links from unknown numbers.","अनजान नंबरों से आए लिंक पर क्लिक न करें।","अनोळखी नंबरवरून आलेल्या लिंकवर क्लिक करू नका."],
+["To block a caller, open Phone → recent call → tap the number → Block.","कॉलर को ब्लॉक करने के लिए, Phone → हाल की कॉल → नंबर पर टैप करें → Block पर टैप करें।","कॉलर ब्लॉक करण्यासाठी, Phone → अलीकडील कॉल → नंबरवर टॅप करा → Block वर टॅप करा."],
+["To report a scam, contact your bank or call the national Cyber Crime helpline 1930.","ठगी की शिकायत करने के लिए, अपने बैंक से संपर्क करें या राष्ट्रीय साइबर क्राइम हेल्पलाइन 1930 पर कॉल करें।","फसवणुकीची तक्रार करण्यासाठी, तुमच्या बँकेशी संपर्क साधा किंवा राष्ट्रीय सायबर क्राइम हेल्पलाइन 1930 वर कॉल करा."],
+["Which button changes the phone volume?","कौन सा बटन फोन की आवाज़ बदलता है?","कोणते बटण फोनचा आवाज बदलते?"],
+["The buttons on the side of the phone","फोन के किनारे के बटन","फोनच्या बाजूची बटणे"],
+["The camera icon","कैमरा आइकन","कॅमेरा आयकॉन"],
+["True or False: You need Wi-Fi to make a phone call.","सही या गलत: फोन कॉल करने के लिए वाई-फ़ाई ज़रूरी है।","बरोबर की चूक: फोन कॉल करण्यासाठी वाय-फाय आवश्यक आहे."],
+["True","सही","बरोबर"],
+["False","गलत","चूक"],
+["Where do you go to make text bigger?","अक्षर बड़े करने के लिए कहाँ जाएँ?","अक्षरे मोठी करण्यासाठी कुठे जावे?"],
+["The Camera app","कैमरा ऐप","कॅमेरा अ‍ॅप"],
+["Which icon do you tap to send a photo in WhatsApp?","व्हाट्सऐप में फोटो भेजने के लिए कौन सा आइकन दबाएँ?","व्हॉट्सअ‍ॅपमध्ये फोटो पाठवण्यासाठी कोणता आयकॉन दाबायचा?"],
+["The paperclip 📎","पेपरक्लिप 📎","पेपरक्लिप 📎"],
+["The trash can","ट्रैश कैन","ट्रॅश कॅन"],
+["True or False: You should reply with money if a message asks urgently.","सही या गलत: अगर संदेश जल्दी पैसे माँगे तो भेज देना चाहिए।","बरोबर की चूक: संदेशात लगेच पैसे मागितले तर पाठवावेत."],
+["How do you send a voice message?","वॉइस संदेश कैसे भेजें?","व्हॉइस संदेश कसा पाठवायचा?"],
+["Press and hold the microphone icon","माइक्रोफ़ोन आइकन दबाकर रखें","मायक्रोफोन आयकॉन दाबून धरा"],
+["Shake the phone","फोन हिलाएँ","फोन हलवा"],
+["What should you check before paying with UPI?","यूपीआई से भुगतान करने से पहले क्या जाँचें?","यूपीआयने पेमेंट करण्यापूर्वी काय तपासावे?"],
+["The receiver's name on screen","स्क्रीन पर प्राप्तकर्ता का नाम","स्क्रीनवरील प्राप्तकर्त्याचे नाव"],
+["The phone's battery percentage","फोन की बैटरी प्रतिशत","फोनची बॅटरी टक्केवारी"],
+["True or False: It is safe to share your UPI PIN with a bank \"employee\" who calls you.","सही या गलत: फोन करने वाले बैंक \"कर्मचारी\" को यूपीआई पिन बताना सुरक्षित है।","बरोबर की चूक: फोन करणाऱ्या बँक \"कर्मचाऱ्याला\" यूपीआय पिन सांगणे सुरक्षित आहे."],
+["How do you check if a payment succeeded?","कैसे जानें कि भुगतान सफल हुआ?","पेमेंट यशस्वी झाले हे कसे कळेल?"],
+["Look in Transaction History","Transaction History में देखें","Transaction History मध्ये पहा"],
+["Restart the phone","फोन रीस्टार्ट करें","फोन रीस्टार्ट करा"],
+["What symbol shows a website may be safer?","कौन सा चिन्ह दिखाता है कि वेबसाइट सुरक्षित हो सकती है?","कोणते चिन्ह वेबसाइट सुरक्षित असू शकते हे दाखवते?"],
+["A lock icon and \"https://\"","लॉक आइकन और \"https://\"","लॉक आयकॉन आणि \"https://\""],
+["A red circle","लाल गोला","लाल वर्तुळ"],
+["True or False: You can search Google using your voice.","सही या गलत: आप आवाज़ से Google पर खोज सकते हैं।","बरोबर की चूक: तुम्ही आवाजाने Google वर शोधू शकता."],
+["What should you avoid clicking?","किस पर क्लिक करने से बचना चाहिए?","कशावर क्लिक करणे टाळावे?"],
+["Unknown links from strangers","अनजान लोगों के लिंक","अनोळखी लोकांच्या लिंक"],
+["The Google search bar","Google सर्च बार","Google सर्च बार"],
+["Which app do you use to take a photo?","फोटो लेने के लिए कौन सा ऐप इस्तेमाल करें?","फोटो काढण्यासाठी कोणते अ‍ॅप वापरावे?"],
+["Camera app","कैमरा ऐप","कॅमेरा अ‍ॅप"],
+["Calculator app","कैलकुलेटर ऐप","कॅल्क्युलेटर अ‍ॅप"],
+["True or False: Deleted photos ask for confirmation first.","सही या गलत: फोटो हटाने से पहले पुष्टि माँगी जाती है।","बरोबर की चूक: फोटो हटवण्यापूर्वी पुष्टी विचारली जाते."],
+["What do you tap to share a photo?","फोटो शेयर करने के लिए क्या टैप करें?","फोटो शेअर करण्यासाठी काय टॅप करावे?"],
+["The Share icon","Share आइकन","Share आयकॉन"],
+["The Home button","Home बटन","Home बटण"],
+["What does OTP stand for?","ओटीपी का पूरा नाम क्या है?","ओटीपीचे पूर्ण नाव काय आहे?"],
+["One-Time Password","वन-टाइम पासवर्ड","वन-टाइम पासवर्ड"],
+["Online Transfer Payment","ऑनलाइन ट्रांसफर पेमेंट","ऑनलाइन ट्रान्सफर पेमेंट"],
+["True or False: Banks call asking for your OTP.","सही या गलत: बैंक फोन करके ओटीपी माँगते हैं।","बरोबर की चूक: बँका फोन करून ओटीपी मागतात."],
+["What should a strong password include?","मज़बूत पासवर्ड में क्या होना चाहिए?","मजबूत पासवर्डमध्ये काय असावे?"],
+["A mix of letters and numbers, not your birthday","अक्षर और नंबर का मेल, जन्मतिथि नहीं","अक्षरे आणि आकडे यांचे मिश्रण, जन्मतारीख नाही"],
+["Just your name","सिर्फ आपका नाम","फक्त तुमचे नाव"],
+["Play & Learn 🎮","खेलें और सीखें 🎮","खेळा आणि शिका 🎮"],
+["Spot the Scam","ठगी को पहचानो","फसवणूक ओळखा"],
+["Read each message and decide: is it safe, or a scam?","हर संदेश पढ़ें और तय करें: यह सुरक्षित है या ठगी?","प्रत्येक संदेश वाचा आणि ठरवा: हे सुरक्षित आहे की फसवणूक?"],
+["Start Game ▸","खेल शुरू करें ▸","खेळ सुरू करा ▸"],
+["🚩 It's a Scam","🚩 यह ठगी है","🚩 ही फसवणूक आहे"],
+["✅ It's Safe","✅ यह सुरक्षित है","✅ हे सुरक्षित आहे"],
+["Play Again ▸","फिर से खेलें ▸","पुन्हा खेळा ▸"],
+["Game Over","खेल समाप्त","खेळ संपला"],
+["New High Score! 🏆","नया सर्वश्रेष्ठ स्कोर! 🏆","नवीन सर्वोत्तम गुण! 🏆"],
+["SMS: 'Your bank account is blocked. Click here to unblock: bit.ly/456xyz'","एसएमएस: 'आपका बैंक खाता ब्लॉक हो गया है। अनब्लॉक करने के लिए यहाँ क्लिक करें: bit.ly/456xyz'","एसएमएस: 'तुमचे बँक खाते ब्लॉक झाले आहे. अनब्लॉक करण्यासाठी येथे क्लिक करा: bit.ly/456xyz'"],
+["SMS: 'Hi Dad, this is Rahul. Call me when free.'","एसएमएस: 'हाय पापा, मैं राहुल बोल रहा हूँ। फ्री होने पर कॉल करना।'","एसएमएस: 'हाय बाबा, मी राहुल बोलतोय. मोकळे झाल्यावर कॉल करा.'"],
+["Call: 'I am from RBI. Share your OTP to stop fraud on your account.'","कॉल: 'मैं आरबीआई से बोल रहा हूँ। धोखाधड़ी रोकने के लिए अपना ओटीपी बताइए।'","कॉल: 'मी आरबीआयकडून बोलतोय. फसवणूक थांबवण्यासाठी तुमचा ओटीपी सांगा.'"],
+["WhatsApp: 'Mom sent you a photo of the grandchildren.'","व्हाट्सऐप: 'मम्मी ने पोते-पोतियों की फोटो भेजी।'","व्हॉट्सअ‍ॅप: 'आईने नातवंडांचा फोटो पाठवला.'"],
+["SMS: 'You have won a lottery of ₹10,00,000! Pay ₹500 fee to claim.'","एसएमएस: 'आपने ₹10,00,000 की लॉटरी जीती है! पाने के लिए ₹500 शुल्क भरें।'","एसएमएस: 'तुम्ही ₹10,00,000 ची लॉटरी जिंकली आहे! मिळवण्यासाठी ₹500 शुल्क भरा.'"],
+["Email: 'Your electricity bill of ₹450 is due on 5th. Pay via official app.'","ईमेल: 'आपका ₹450 का बिजली बिल 5 तारीख को देय है। आधिकारिक ऐप से भुगतान करें।'","ईमेल: 'तुमचे ₹450 चे वीज बिल 5 तारखेला देय आहे. अधिकृत अ‍ॅपने भरा.'"],
+["Call: 'This is Amazon. Your parcel is stuck, pay ₹99 to release it.'","कॉल: 'मैं अमेज़न से बोल रहा हूँ। आपका पार्सल अटका है, छुड़ाने के लिए ₹99 भरें।'","कॉल: 'मी अ‍ॅमेझॉनकडून बोलतोय. तुमचे पार्सल अडकले आहे, सोडवण्यासाठी ₹99 भरा.'"],
+["SMS: 'Your OTP for login is 4821. Do not share with anyone.'","एसएमएस: 'लॉगिन के लिए आपका ओटीपी 4821 है। किसी के साथ साझा न करें।'","एसएमएस: 'लॉगिनसाठी तुमचा ओटीपी 4821 आहे. कोणाशीही शेअर करू नका.'"],
+["WhatsApp: 'Send me your UPI PIN so I can send you money urgently.'","व्हाट्सऐप: 'जल्दी पैसे भेजने के लिए अपना यूपीआई पिन भेजो।'","व्हॉट्सअ‍ॅप: 'लगेच पैसे पाठवण्यासाठी तुमचा यूपीआय पिन पाठवा.'"],
+["Call: 'Doctor's clinic confirming your appointment tomorrow at 5 PM.'","कॉल: 'डॉक्टर के क्लिनिक से कल शाम 5 बजे की अपॉइंटमेंट की पुष्टि।'","कॉल: 'डॉक्टरांच्या दवाखान्यातून उद्या संध्याकाळी 5 वाजताच्या भेटीची पुष्टी.'"],
+["Contacts","संपर्क","संपर्क"],
+["Video Call","वीडियो कॉल","व्हिडिओ कॉल"],
+["Settings","सेटिंग्स","सेटिंग्ज"],
+["Maps","मैप्स","नकाशे"],
+["Gallery","गैलरी","गॅलरी"],
+["Add New Contact","नया संपर्क जोड़ें","नवीन संपर्क जोडा"],
+["Full Name","पूरा नाम","पूर्ण नाव"],
+["Phone Number","फ़ोन नंबर","फोन नंबर"],
+["Save Contact","संपर्क सेव करें","संपर्क सेव्ह करा"],
+["Contact saved! ✓","संपर्क सेव हो गया! ✓","संपर्क सेव्ह झाला! ✓"],
+["Please fill in both fields.","कृपया दोनों जानकारी भरें।","कृपया दोन्ही माहिती भरा."],
+["Tap + to add a new family member's number.","नए सदस्य का नंबर जोड़ने के लिए + दबाएँ।","नवीन सदस्याचा नंबर जोडण्यासाठी + दाबा."],
+["New Meeting","नई मीटिंग","नवीन मीटिंग"],
+["Tap 'New Meeting' to start a practice video call, then share the link with family.","अभ्यास वीडियो कॉल शुरू करने के लिए 'New Meeting' दबाएँ, फिर लिंक परिवार को भेजें।","सराव व्हिडिओ कॉल सुरू करण्यासाठी 'New Meeting' दाबा, नंतर लिंक कुटुंबाला पाठवा."],
+["Connecting…","जुड़ रहा है…","जोडत आहे…"],
+["Meeting link copied! Share it with family so they can join.","मीटिंग लिंक कॉपी हो गई! परिवार को भेजें ताकि वे जुड़ सकें।","मीटिंग लिंक कॉपी झाली! कुटुंबाला पाठवा जेणेकरून ते सामील होऊ शकतील."],
+["Leave Meeting","मीटिंग छोड़ें","मीटिंग सोडा"],
+["Meeting ended. Great practice! 🎉","मीटिंग समाप्त। बहुत बढ़िया अभ्यास! 🎉","मीटिंग संपली. उत्तम सराव! 🎉"],
+["Try changing the settings below. Nothing here affects your real phone.","नीचे दी सेटिंग्स बदलकर देखें। यह आपके असली फोन पर असर नहीं डालता।","खालील सेटिंग्ज बदलून पहा. हे तुमच्या खऱ्या फोनवर परिणाम करत नाही."],
+["Text Size","अक्षर का आकार","अक्षराचा आकार"],
+["Wi-Fi","वाई-फ़ाई","वाय-फाय"],
+["Ringtone Volume","रिंगटोन आवाज़","रिंगटोन आवाज"],
+["Small","छोटा","लहान"],
+["Large","बड़ा","मोठा"],
+["On","चालू","सुरू"],
+["Off","बंद","बंद"],
+["Nice! Wi-Fi is now on. Your phone can use the internet.","बढ़िया! वाई-फ़ाई अब चालू है। आपका फोन इंटरनेट इस्तेमाल कर सकता है।","छान! वाय-फाय आता सुरू आहे. तुमचा फोन इंटरनेट वापरू शकतो."],
+["Search for a place, like 'hospital' or 'market'.","किसी जगह को खोजें, जैसे 'अस्पताल' या 'बाज़ार'।","एखादे ठिकाण शोधा, जसे 'रुग्णालय' किंवा 'बाजार'."],
+["Search a place","जगह खोजें","ठिकाण शोधा"],
+["Found it! This pin shows where it is. Tap Directions to see the way there.","मिल गया! यह पिन जगह दिखाता है। रास्ता देखने के लिए Directions दबाएँ।","सापडले! हा पिन ठिकाण दाखवतो. रस्ता पाहण्यासाठी Directions दाबा."],
+["Get Directions","रास्ता दिखाएँ","रस्ता दाखवा"],
+["Directions shown! (Practice only.)","रास्ता दिखाया गया! (केवल अभ्यास।)","रस्ता दाखवला! (फक्त सराव.)"],
+["Tap a photo to view it. You can share or delete it safely — this is practice only.","फोटो देखने के लिए उस पर टैप करें। आप इसे सुरक्षित रूप से शेयर या डिलीट कर सकते हैं — यह केवल अभ्यास है।","फोटो पाहण्यासाठी त्यावर टॅप करा. तुम्ही तो सुरक्षितपणे शेअर किंवा डिलीट करू शकता — हा फक्त सराव आहे."],
+["Delete Photo","फोटो हटाएँ","फोटो हटवा"],
+["Share Photo","फोटो शेयर करें","फोटो शेअर करा"],
+["Photo deleted. (Practice only — nothing real was removed.)","फोटो हटाई गई। (केवल अभ्यास — कुछ भी असली नहीं हटाया गया।)","फोटो हटवला. (फक्त सराव — काहीही खरे हटवले गेले नाही.)"],
+["Photo shared! ✓","फोटो शेयर हुआ! ✓","फोटो शेअर झाला! ✓"],
+["◂ Back to Gallery","◂ गैलरी पर वापस","◂ गॅलरीकडे परत"],
+];
+const TR={hi:{},mr:{}};
+ROWS.forEach(r=>{TR.hi[r[0]]=r[1];TR.mr[r[0]]=r[2];});
+const PAT=[
+ [/^✓ Practice payment of ₹(\d+) to Ramesh Kumar Stores successful\. \(No real money was sent\.\)$/,{hi:'✓ ₹$1 का अभ्यास भुगतान रमेश कुमार स्टोर्स को सफल रहा। (कोई असली पैसा नहीं भेजा गया।)',mr:'✓ ₹$1 चे सराव पेमेंट रमेश कुमार स्टोअर्सला यशस्वी झाले. (खरे पैसे पाठवले गेले नाहीत.)'}],
+ [/^Showing results for "(.+)"\.\.\. Today: Sunny, 29°C\. \(Practice result\.\)$/,{hi:'"$1" के लिए परिणाम दिखा रहे हैं... आज: धूप, 29°C। (अभ्यास परिणाम।)',mr:'"$1" साठी निकाल दाखवत आहे... आज: ऊन, 29°C. (सराव निकाल.)'}],
+ [/^📞 Calling\.\.\. Connected! \(This is a practice call, no one was really called\.\)$/,{hi:'📞 कॉल हो रहा है... जुड़ गया! (यह अभ्यास कॉल है, असल में किसी को कॉल नहीं किया गया।)',mr:'📞 कॉल लागत आहे... जोडले गेले! (हा सराव कॉल आहे, प्रत्यक्षात कोणालाही कॉल केला नाही.)'}],
+ [/^(\d+) of (\d+) modules completed$/,{hi:'$2 में से $1 पाठ पूरे हुए',mr:'$2 पैकी $1 धडे पूर्ण'}],
+ [/^Total score: (\d+)$/,{hi:'कुल स्कोर: $1',mr:'एकूण गुण: $1'}],
+ [/^Question (\d+) of (\d+)$/,{hi:'प्रश्न $1 / $2',mr:'प्रश्न $1 / $2'}],
+ [/^Score: (\d+)\/(\d+)$/,{hi:'स्कोर: $1/$2',mr:'गुण: $1/$2'}],
+ [/^You scored (\d+) out of (\d+)\.$/,{hi:'आपने $2 में से $1 अंक पाए।',mr:'तुम्हाला $2 पैकी $1 गुण मिळाले.'}]
+,
+ [/^✓ Practice payment of ₹([\d.]+) to (.+) successful\. \(No real money was sent\.\)$/,{hi:'✓ ₹$1 का अभ्यास भुगतान $2 को सफल रहा। (कोई असली पैसा नहीं भेजा गया।)',mr:'✓ ₹$1 चे सराव पेमेंट $2 ला यशस्वी झाले. (खरे पैसे पाठवले गेले नाहीत.)'}],
+ [/^Showing results for "(.*)"\.\.\. Today: Sunny, 29°C\. \(Practice result\.\)$/,{hi:'"$1" के परिणाम… आज: धूप, 29°C। (अभ्यास परिणाम।)',mr:'"$1" चे निकाल… आज: ऊन, 29°C. (सराव निकाल.)'}],
+ [/^Paying ₹([\d.]+) to (.+)$/,{hi:'₹$1 का भुगतान $2 को कर रहे हैं',mr:'₹$1 चे पेमेंट $2 ला करत आहात'}],
+ [/^₹([\d.]+) paid to (.+)$/,{hi:'₹$1 का भुगतान $2 को हो गया',mr:'₹$1 चे पेमेंट $2 ला झाले'}],
+ [/^Verified · (.+)$/,{hi:'सत्यापित · $1',mr:'सत्यापित · $1'}]
+];
+let lang='en'; try{lang=localStorage.getItem('digitalEasyLang')||'en';}catch(e){}
+const origText=new WeakMap();
+function tx(s){
+  if(lang==='en') return s;
+  const t=s.trim(); if(!t) return s;
+  let r=TR[lang][t];
+  if(r===undefined) for(const [re,o] of PAT){ if(re.test(t)){ r=t.replace(re,o[lang]); break; } }
+  if(r===undefined){ const m=t.match(/^(.+) Quiz$/); if(m&&TR[lang][m[1]]) r=TR[lang][m[1]]+(lang==='hi'?' प्रश्नोत्तरी':' प्रश्नमंजुषा'); }
+  return r===undefined?s:s.replace(t,()=>r);
+}
+function doText(n){ if(!origText.has(n)) origText.set(n,n.nodeValue); const v=tx(origText.get(n)); if(n.nodeValue!==v) n.nodeValue=v; }
+function walk(root){
+  if(root.nodeType===3){ doText(root); return; }
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>/^(SCRIPT|STYLE)$/.test(n.parentNode.nodeName)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+  const list=[]; let n; while(n=w.nextNode()) list.push(n);
+  list.forEach(doText);
+  root.querySelectorAll('[placeholder]').forEach(e=>{ if(!e.dataset.ph) e.dataset.ph=e.getAttribute('placeholder'); e.placeholder=tx(e.dataset.ph); });
+}
+function applyLang(l){
+  lang=l; try{localStorage.setItem('digitalEasyLang',l);}catch(e){}
+  document.documentElement.lang=l; document.getElementById('langSel').value=l;
+  walk(document.body);
+}
+new MutationObserver(ms=>{ if(lang==='en') return; ms.forEach(m=>m.addedNodes.forEach(n=>{ if(n.nodeType===3||n.nodeType===1) walk(n); })); }).observe(document.body,{childList:true,subtree:true});
+document.getElementById('langSel').addEventListener('change',e=>applyLang(e.target.value));
+applyLang(lang);
+</script>
+</body>
+</html>
